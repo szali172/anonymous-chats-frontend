@@ -20,11 +20,15 @@ export class UserServiceService {
     return this.httpClient.get<User>(environment.apiUrl+this.location +`/${id}`)
   }
 
+  getAllUsers(): Observable<User[]>{
+    return this.httpClient.get<User[]>(environment.apiUrl+this.location)
+  }
+
   updateUser(user:User):Observable<User>{
     return this.httpClient.put<User>(environment.apiUrl+this.location +`/${user.id}`,user)
   }
 
-  CreateUser(user:User){
+  CreateUser(user:User): Observable<User>{
     return this.httpClient.post<User>(environment.apiUrl+this.location, user)
   }
 

@@ -1,15 +1,17 @@
-<div class="MenuContainer">
-
-
-    <div *ngFor="let chat of chats">
-            <div class="chatPreviewBox">
+<div *ngIf="toggleState" class="OpenMenuContainer">
+    <button *ngIf="toggleState" (click)="toggleState =false"> Close Menu</button>
+    <div class="ChatPreviewContainer">
+        <div *ngFor="let chat of chatMessages">
+            <div class="ChatPreview">
             ----------
             {{chat.chatId}}
-            {{chat.groupId}}
-            {{chat.startDate}}
+            {{chat.originalMessage}}
+            {{chat.filteredMessage}}
             ----------
             </div>
+        </div>
     </div>
 </div>
-
-
+<div  *ngIf="!toggleState" class="ClosedMenuContainer">
+    <button (click)="toggleState =true"> Open Menu</button>
+</div>

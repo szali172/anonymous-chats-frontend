@@ -27,7 +27,7 @@ export class ChatService {
     return this.httpClient.get<ChatMessage[]>(`${environment.apiUrl}/${this.location}/messages/${chatId}`)
   }
 
-  getUserGuesses(userId : string,chatId : number): Observable<UserGuess[]>{
+  getUserGuesses(chatId : number,userId : string): Observable<UserGuess[]>{
     return this.httpClient.get<UserGuess[]>(`${environment.apiUrl}/${this.location}/guesses/chatId=${chatId}/guesserId=${userId}`)
   }
 
@@ -36,6 +36,6 @@ export class ChatService {
   }
 
   createChatMessage(message :ChatMessage): Observable<ChatMessage> {
-    return this.httpClient.post<ChatMessage>(`${environment.apiUrl}/${this.location}/messages/}`,message)
+    return this.httpClient.post<ChatMessage>(`${environment.apiUrl}/${this.location}/messages`,message)
   }
 }

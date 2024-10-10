@@ -1,19 +1,62 @@
+/* * {
+    border: 1px solid red;
+} */
+
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#title {
+    display: flex;
+    justify-content: center;
+    color: white;
+    font-size: 3vmax;
+}
+
 #group-list {
     display: flex;
-    flex-flow: row;
+    flex-flow: row wrap;
+    flex-grow: 0;
     justify-content: center;
     align-items: center;
-    gap: 10vw;
-    margin: 20vh 0;
+    gap: 100px;
+    width: 100%;
+    height: 100%;
+    padding: 5vh 0;
+    transition: ease-in-out all 1s;
 }
 
 .group-card {
     background-color: rgb(25, 114, 114);
     color: whitesmoke;
     border: 1px solid rgb(68, 68, 68);
-    border-radius: 5px;
-    height: 20vh;
-    width: 20vw;
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 200px;
+    width: 200px;
     text-align: center;
     align-content: center;
+    position: relative;
+
+    /* padding: 10px; */
+
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: ease all 0.5s;
+}
+
+
+.group-card:hover {
+    transform: scale(1.1);
+    border: 5px solid rgb(54, 46, 104);
+    transition: ease all 0.3s;
+    z-index: 1;
 }

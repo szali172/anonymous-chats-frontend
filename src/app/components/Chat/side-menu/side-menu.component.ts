@@ -21,7 +21,7 @@ export class SideMenuComponent {
   chatMessages : ChatMessage[] = []
   userGuesses : UserGuess[] = []
   userGuess : UserGuess = {id: 1, chatId:1, guesserId: "1", guesseeId: "4", actualId: "11", createdOn: new Date("2019-01-16") }
-  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1}
+  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1"}
   
   toggleState: boolean = false
 
@@ -54,18 +54,7 @@ export class SideMenuComponent {
         console.log('Chat User pull complete.')
       }
     })
-    //this will be the function needed in the chat window to display teh correct chats.
-    this.chatService.getChatMessages(1).subscribe({
-      next:(data) => {
-        this.chatMessages = data;
-      },
-      error: (error) => {
-        console.error('Error pulling Chat Messages', error)
-      },
-      complete: () => {
-        console.log('Chat Message pull complete.')
-      }
-    })
+
     this.chatService.getUserGuesses(3,"10").subscribe({
       next:(data) => {
         this.userGuesses = data;

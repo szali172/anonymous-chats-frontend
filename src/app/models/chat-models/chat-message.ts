@@ -3,4 +3,5 @@ export interface ChatMessage {
     chatId : number
     originalMessage : string
     filteredMessage : string | null
+    createdBy : string
 }

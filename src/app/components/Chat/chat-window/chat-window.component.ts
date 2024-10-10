@@ -21,10 +21,28 @@ export class ChatWindowComponent {
   groupService = inject(GroupService);
   chatService = inject(ChatService)
 
-  openChat : number | null = null
+  openChatId : number | null = null
+
+  openChatMessages : ChatMessage[] =[];
   
   currentMessageDto : CreateMessageDto = {chatId: 0, originalMessage: "hi mom", filteredMessage: "hi mom"}
 
+  loadChatMessages(openChatId : number){
+    this.chatService.getChatMessages(openChatId).subscribe({
+      next:(data) => {
+        this.openChatMessages = data;
+      },
+      error: (error) => {
+        console.error('Error pulling Chat Messages', error)
+      },
+      complete: () => {
+        console.log('Chat Message pull complete.')
+      }
+    })
 
+    //sorts the messages by ID
+    this.openChatMessages.sort((a,b) => a.chatId - b.chatId)
+  }
+  
 }
 

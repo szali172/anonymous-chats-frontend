@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Chat } from '../../../models/chat-models/chat';
 import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
 import { ChatUser } from '../../../models/chat-models/chat-user';
 import { ChatMessage } from '../../../models/chat-models/chat-message';
 import { UserGuess } from '../../../models/chat-models/user-guess';
+import { ChatWindowComponent } from '../chat-window/chat-window.component';
 
 @Component({
   selector: 'app-side-menu',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ChatWindowComponent],
   templateUrl: './side-menu.component.html',
   styleUrl: './side-menu.component.css'
 })
 export class SideMenuComponent {
+  //baseline objects used while testing service.
   chats : Chat[] = []
   chatUsers : ChatUser[] = []
   chatMessages : ChatMessage[] = []
@@ -23,9 +25,11 @@ export class SideMenuComponent {
   
   toggleState: boolean = false
 
+  @Input() selectedGroupId: number | null = null
+
   constructor(private chatService : ChatService) {}
 
-
+// all of these are testing methods. should be broken up into functions and called when needed in both chat window appss
   ngOnInit(): void {
     this.chatService.getUserChats("1",1).subscribe({
       next:(data) => {
@@ -50,6 +54,7 @@ export class SideMenuComponent {
         console.log('Chat User pull complete.')
       }
     })
+    //this will be the function needed in the chat window to display teh correct chats.
     this.chatService.getChatMessages(1).subscribe({
       next:(data) => {
         this.chatMessages = data;

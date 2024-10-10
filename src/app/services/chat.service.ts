@@ -6,6 +6,7 @@ import { environment } from '../../Environment/environment';
 import { ChatUser } from '../models/chat-models/chat-user';
 import { ChatMessage } from '../models/chat-models/chat-message';
 import { UserGuess } from '../models/chat-models/user-guess';
+import { CreateMessageDto } from '../models/chat-models/create-message-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,7 @@ export class ChatService {
     return this.httpClient.put<UserGuess>(`${environment.apiUrl}/${this.location}/guesses`, userGuess)
   }
 
-  createChatMessage(message :ChatMessage): Observable<ChatMessage> {
-    return this.httpClient.post<ChatMessage>(`${environment.apiUrl}/${this.location}/messages`,message)
+  createChatMessage(messageDto :CreateMessageDto): Observable<CreateMessageDto> {
+    return this.httpClient.post<CreateMessageDto>(`${environment.apiUrl}/${this.location}/messages`,messageDto)
   }
 }

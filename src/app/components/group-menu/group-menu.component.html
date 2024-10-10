@@ -1,0 +1,12 @@
+<div class="container">
+    
+    <div id="group-list">
+        <a 
+        class="group-card" 
+        *ngFor="let group of userGroups"
+        [routerLink]="['/chats', group.id]"
+        >
+            {{group.name}}
+        </a>
+    </div>
+</div>

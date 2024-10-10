@@ -1,14 +1,14 @@
 .OpenMenuContainer{
-    width: 30%;
-    height: 99%;
-    position: fixed;
+    width: 30vb;
+    height: 99vb;
+    position: relative;
     border-style: dashed;
     background-color: beige;
     
 }
 
 .ClosedMenuContainer {
-    width: max-content;
+    width: 10vb;
     height: max-content;
     position: relative;
     border-style: dashed;

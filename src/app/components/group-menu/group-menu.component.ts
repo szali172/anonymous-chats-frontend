@@ -6,7 +6,7 @@ import { UpdateGroupDto } from '../../models/group/update-group-dto';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-const USERID = "20";
+const USERID = "1";
 
 @Component({
   selector: 'app-group-menu',

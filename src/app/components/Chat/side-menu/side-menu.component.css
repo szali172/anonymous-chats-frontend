@@ -1,0 +1,25 @@
+.OpenMenuContainer{
+    width: 30%;
+    height: 100%;
+    position: fixed;
+    border-style: dashed;
+    
+}
+.ChatPreviewContainer{
+    bottom: 0;
+    left: 0;
+    position:absolute
+
+
+}
+.ChatPreview{
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}
+.ClosedMenuContainer {
+    width: max-content;
+    height: max-content;
+    position: fixed;
+    border-style: dashed;
+}

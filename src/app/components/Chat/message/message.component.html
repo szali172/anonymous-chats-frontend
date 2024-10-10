@@ -1,0 +1,7 @@
+<div class="container" [ngClass]="USERID === author ? 'container-right' : 'container-left'">
+    <span>{{author}}</span>
+    <div class="message-box" 
+        [ngClass]="USERID === author ? 'message-right' : 'message-left'">
+        <p>{{message}}</p>
+    </div>
+</div>

@@ -23,8 +23,8 @@ export class SideMenuComponent {
   chatMessages : ChatMessage[] = []
   userGuesses : UserGuess[] = []
   userGuess : UserGuess = {id: 1, chatId:1, guesserId: "1", guesseeId: "4", actualId: "11", createdOn: new Date("2019-01-16") }
-  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1"}
-
+  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1", createdOn: new Date()}
+  
 
   fakeUsers :string[] = ["Albatross", "Tex","Gerbil"]
   chats : Chat[] = []
@@ -33,7 +33,7 @@ export class SideMenuComponent {
 
   //need to replace user with auth info
 loggedInUser : string = "1"
-@Input() selectedGroupId: number = 1
+@Input() selectedGroupId: number | null = 1
 
   constructor(private chatService : ChatService) {}
 

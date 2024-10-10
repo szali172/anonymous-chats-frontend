@@ -1,0 +1,15 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.message-window {
+    position: relative;
+    border: 1px solid black;
+    height: 97vh;
+    width: 80vw;
+    margin: 0;
+}

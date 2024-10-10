@@ -4,4 +4,5 @@ export interface ChatMessage {
     originalMessage : string
     filteredMessage : string | null
     createdBy : string
+    createdOn: Date;
 }

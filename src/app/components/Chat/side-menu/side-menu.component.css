@@ -1,10 +1,19 @@
 .OpenMenuContainer{
-    width: 30%;
-    height: 100%;
-    position: fixed;
+    width: 30vw;
+    height: 96vh   ;
+    position: relative;
     border-style: dashed;
-    
+    z-index: 1;
 }
+
+.ClosedMenuContainer {
+    width: max-content;
+    height: max-content;
+    position: relative;
+    border-style: dashed;
+    z-index: 1;
+}
+
 .ChatPreviewContainer{
     bottom: 0;
     left: 0;
@@ -16,10 +25,4 @@
     border-width: 1px;
     border-color: black;
     border-style: solid;
-}
-.ClosedMenuContainer {
-    width: max-content;
-    height: max-content;
-    position: fixed;
-    border-style: dashed;
 }

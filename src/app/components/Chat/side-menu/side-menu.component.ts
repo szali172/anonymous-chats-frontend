@@ -21,7 +21,7 @@ export class SideMenuComponent {
   chatMessages : ChatMessage[] = []
   userGuesses : UserGuess[] = []
   userGuess : UserGuess = {id: 1, chatId:1, guesserId: "1", guesseeId: "4", actualId: "11", createdOn: new Date("2019-01-16") }
-  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1"}
+  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1", createdOn: new Date()}
   
   toggleState: boolean = false
 

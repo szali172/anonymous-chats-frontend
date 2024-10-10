@@ -1,12 +1,15 @@
-<div>
+<div class="container">
 <!-- Passed group ID into side menu -->
 <app-side-menu [selectedGroupId]="selectedGroupId"></app-side-menu>
-<div *ngIf="!(openChat === null)">
+<div *ngIf="!(openChatId !== null)">
     <!-- open area for when a chat is selected. Need to figure out how to pass a selected group id up to the parent. Is doable but might not be the best idea. -->
-     <div class="chatMessageDisplay">
+     <div class="message-window">
         <div *ngFor="let message of openChatMessages">
-            {{message.createdBy}}
-            {{message.filteredMessage}}
+            <app-message 
+                        [message]="message.filteredMessage"
+                        [author]="message.createdBy"
+                        [timeStamp]="message.createdOn">
+            </app-message>
         </div>
      </div>
 </div>

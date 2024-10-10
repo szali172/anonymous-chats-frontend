@@ -12,7 +12,7 @@ export class UserServiceService {
   //will need to revisit once authentication is set up. Most likely will need to change. should've built out a component first before fully building out. 
   //Still need deep testing.
 
-  private location = "user/"
+  private location = "/user/"
 
   constructor(private httpClient : HttpClient) { }
 

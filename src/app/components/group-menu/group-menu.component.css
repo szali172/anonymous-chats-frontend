@@ -1,0 +1,19 @@
+#group-list {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10vw;
+    margin: 20vh 0;
+}
+
+.group-card {
+    background-color: rgb(25, 114, 114);
+    color: whitesmoke;
+    border: 1px solid rgb(68, 68, 68);
+    border-radius: 5px;
+    height: 20vh;
+    width: 20vw;
+    text-align: center;
+    align-content: center;
+}

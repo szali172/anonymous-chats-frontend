@@ -9,6 +9,19 @@ import { ChatWindowComponent } from '../chat-window/chat-window.component';
 import { CompleteChat } from '../../../models/chat-models/complete-chat';
 import { RouterModule } from '@angular/router';
 
+
+/*
+
+CURRENTLY NOT USED
+
+May have use on terms of a refactor to move things out of all being located in the chat page component. TBD. If decision is made to keep things in the chat page, should remove this component.  
+
+*/
+
+
+
+
+
 @Component({
   selector: 'app-side-menu',
   standalone: true,
@@ -17,29 +30,24 @@ import { RouterModule } from '@angular/router';
   styleUrl: './side-menu.component.css'
 })
 export class SideMenuComponent {
-  //baseline objects used while testing service.
 
-  chatUsers : ChatUser[] = []
-  chatMessages : ChatMessage[] = []
-  userGuesses : UserGuess[] = []
-  userGuess : UserGuess = {id: 1, chatId:1, guesserId: "1", guesseeId: "4", actualId: "11", createdOn: new Date("2019-01-16") }
-  chatMessage : ChatMessage = {id: 1, originalMessage: "asdfasdf", filteredMessage: "asfdfsdafsdaafsd", chatId: 1, createdBy: "1", createdOn: new Date()}
-  
-
-  fakeUsers :string[] = ["Albatross", "Tex","Gerbil"]
-  chats : Chat[] = []
-  completeChats: CompleteChat[] = []
   toggleState: boolean = true
-
+  @Input() selectedGroupId: number = 0
+  @Input() completeChats : CompleteChat[] = []
+  
   //need to replace user with auth info
-loggedInUser : string = "1"
-@Input() selectedGroupId: number | null = 1
+  loggedInUser : string = "1"
 
   constructor(private chatService : ChatService) {}
 
-// all of these are testing methods. should be broken up into functions and called when needed in both chat window appss
-  ngOnInit(): void {
-    this.getUserChats()
+  ngOnInit() {
+
+  }
+
+
+  //baseline objects used while testing service.
+
+
 
 
     // this.chatService.getUserChats("1",1).subscribe({
@@ -96,67 +104,6 @@ loggedInUser : string = "1"
     // //   complete: () => {
     // //     console.log('Chat Message creation complete.')
     // //   }
-    // // })
-
-  }
-
-  getUserChats() {
-    this.chatService.getUserChats(this.loggedInUser,1).subscribe({
-      next:(data) => {
-        this.chats = data;
-      },
-      error: (error) => {
-        console.error('Error pulling all chats', error)
-      },
-      complete: () => {
-        console.log('Chat pull complete.')
-        console.log(`Number of chats found ${this.chats.length}`)
-        console.log(this.chats[0])
-      }
-    })
-
-  }
-  getChatUsers(selectedChat : number) : ChatUser[] {
-
-    //Add Users to the chat object
-    let y : ChatUser[] = []
-    this.chatService.getChatUsers(selectedChat).subscribe({
-      next:(data) => {
-        //this.completeChats[i].chatUsers = data;
-        y = data;
-      },
-      error: (error) => {
-        console.error('Error pulling all Chat Users', error)
-      },
-      complete: () => {
-        console.log('Chat User pull complete.')
-        
-      }
-    })
-    return y
-  }
-
-  getChatMessages(selectedChat : number) : ChatMessage[] {
-    var z : ChatMessage[] = []
-        //add array of chat messages
-        this.chatService.getChatMessages(selectedChat).subscribe({
-          next:(data) => {
-            //this.completeChats[i].chatMessages = data;
-            z = data;
-          },
-          error: (error) => {
-            console.error('Error pulling Chat Messages', error)
-          },
-          complete: () => {
-            console.log('Chat Message pull complete.')
-          }
-        })
-        return z;
-  }
-
-  buildUserChats() { 
-    
-  }
-  
+    // // }) 
 
 }

@@ -16,8 +16,8 @@ export class ChatService {
   location = "Chat"
   constructor(private httpClient :HttpClient) { }
 
-  getUserChats(userId : string, chatId : number): Observable<Chat[]>{
-    return this.httpClient.get<Chat[]>(`${environment.apiUrl}/${this.location}/chats/userId=${userId}/groupId=${chatId}`)
+  getUserChats(userId : string, groupId : number): Observable<Chat[]>{
+    return this.httpClient.get<Chat[]>(`${environment.apiUrl}/${this.location}/chats/userId=${userId}/groupId=${groupId}`)
   }
 
   getChatUsers(chatId : number): Observable<ChatUser[]>{

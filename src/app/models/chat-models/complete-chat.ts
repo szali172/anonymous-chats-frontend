@@ -5,6 +5,10 @@ import { ChatUser } from "./chat-user";
 
 export interface CompleteChat {
     chat : Chat
+    //chatUserMapping : ChatDictionaryThing
     chatUsers : ChatUser[]
-    chatMessages : ChatMessage[]
+
+
+    //Moving to be loaded directly in the chat-window
+    //chatMessages : ChatMessage[]
 }

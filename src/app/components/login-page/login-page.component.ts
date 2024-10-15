@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '@auth0/auth0-angular';
+import { DOCUMENT } from '@angular/common';
+
 
 @Component({
   selector: 'app-login-page',
@@ -9,7 +12,12 @@ import { RouterLink } from '@angular/router';
   styleUrl: './login-page.component.css'
 })
 export class LoginPageComponent {
+  auth = inject(AuthService);
+  document = inject(DOCUMENT);
 
-  UserId: string = "1"
-
+  logIn() {
+    this.auth.loginWithRedirect({
+      appState: { target: '/groups' }
+    })
+  }
 }

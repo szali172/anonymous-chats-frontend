@@ -2,6 +2,9 @@
     <span>{{author}}</span>
     <div class="message-box" 
         [ngClass]="USERID === author ? 'message-right' : 'message-left'">
-        <p>{{message}}</p>
+        <p>
+            {{message}}<br>
+            {{pseudonym}}
+        </p>
     </div>
 </div>

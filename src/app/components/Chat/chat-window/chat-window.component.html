@@ -1,15 +1,17 @@
-<div class="container">
-<div *ngIf="!(openChatId !== null)">
+<div class="container" >
     <!-- open area for when a chat is selected. Need to figure out how to pass a selected group id up to the parent. Is doable but might not be the best idea. -->
-     <div class="message-window">
-        <div *ngFor="let message of openChatMessages">
+     <cdk-virtual-scroll-viewport class="message-window" itemSize="50" minBufferPx="200" maxBufferPx="400">
+        <div *cdkVirtualFor="let message of openChatMessages">
             <app-message 
                         [message]="message.filteredMessage"
                         [author]="message.createdBy"
+                        [pseudonym]="pullMessagePseudonym(message)"
                         [timeStamp]="message.createdOn">
             </app-message>
         </div>
-     </div>
-</div>
-
+    </cdk-virtual-scroll-viewport>
+    <mat-form-field style="width: 70vw;">
+        <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
+        <input class="chat-input-box" matInput cdkTextareaAutosize cdkAutosizeMinRows="0" cdkAutosizeMaxRows="20">
+    </mat-form-field>
 </div>

@@ -53,6 +53,11 @@ export class ChatPageContainerComponent {
   private groupService = inject(GroupService);
   private chatService = inject(ChatService)
 
+  //Check for if a chat is selected
+  isChatSelected : boolean = false
+  selectedChatId : number = 0
+  selectedCompleteChat! : CompleteChat;
+
   //Observer that looks for screensize then changes the sidebar to be accessible for mobile
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -62,7 +67,7 @@ export class ChatPageContainerComponent {
 
   @Input({required : true}) selectedGroupId : number | number = 1;
   //need to replace user with auth info
-  loggedInUser : string = "11"
+  loggedInUser : string = "1"
 
 
   //declare all of the various things needed for functionality. 
@@ -113,8 +118,9 @@ export class ChatPageContainerComponent {
   getChatUsers(){
     for(var i of this.chats)
     {
+      console.log(i)
     //Add Users to the chat object
-      this.chatService.getChatUsers(i.chatId).subscribe({
+      this.chatService.getChatUsers(i.id).subscribe({
         next:(data) => {
           this.allChatUsers.push(data);
         },
@@ -142,4 +148,17 @@ export class ChatPageContainerComponent {
     this.isLoaded = true;
   }
 
+  //used to map the selected CompleteChat obect and pass it down to the chat window
+  selectChatEvent(inputChatId : number) {
+    this.isChatSelected = !this.isChatSelected
+    if (this.isChatSelected)
+    {
+      // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
+      this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId)!;
+      console.log(this.selectedCompleteChat)
+      if(this.selectedCompleteChat == undefined)
+        console.log("Error retreiving complete chat object.")
+    }
+  }
 }
+

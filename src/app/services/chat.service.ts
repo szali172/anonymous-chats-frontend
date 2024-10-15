@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Chat } from '../models/chat-models/chat';
-import { environment } from '../../Environment/environment';
+import { environment } from '../../environments/environment';
 import { ChatUser } from '../models/chat-models/chat-user';
 import { ChatMessage } from '../models/chat-models/chat-message';
 import { UserGuess } from '../models/chat-models/user-guess';

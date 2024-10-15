@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../Environment/environment';
+import { environment } from '../../environments/environment';
 import { Group } from '../models/group/group';
 import { User } from '../models/user';
 import { CreateGroupDto } from '../models/group/create-group-dto';

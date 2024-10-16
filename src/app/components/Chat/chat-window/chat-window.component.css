@@ -15,5 +15,5 @@
 }
 
 .chat-input-box {
-    width: 100%
+    display: flex;
 }

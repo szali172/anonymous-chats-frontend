@@ -10,8 +10,13 @@
             </app-message>
         </div>
     </cdk-virtual-scroll-viewport>
-    <mat-form-field style="width: 70vw;">
-        <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
-        <input class="chat-input-box" matInput cdkTextareaAutosize cdkAutosizeMinRows="0" cdkAutosizeMaxRows="20">
-    </mat-form-field>
+    <div>
+        <mat-form-field style="width: 70vw;">
+            <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
+            <input class="chat-input-box" matInput cdkTextareaAutosize cdkAutosizeMinRows="0" cdkAutosizeMaxRows="20" [(ngModel)]="chatMessageInput">
+        </mat-form-field>
+        <button (click)="sendChatMessage()"> Send Message</button>
+
+    </div>
+
 </div>

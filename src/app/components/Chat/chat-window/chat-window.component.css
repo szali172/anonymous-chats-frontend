@@ -1,6 +1,6 @@
 .container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     gap: 10px;
@@ -9,7 +9,11 @@
 .message-window {
     position: relative;
     border: 1px solid black;
-    height: 97vh;
+    height: 80vh;
     width: 80vw;
     margin: 0;
+}
+
+.chat-input-box {
+    width: 100%
 }

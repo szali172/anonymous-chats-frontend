@@ -14,5 +14,7 @@ export class MessageComponent {
   @Input({required: true}) message : string | null = "";
   @Input({required: true}) author : string | null = "";
   @Input({required: true}) timeStamp : Date | string = "";
+  @Input({required: true}) pseudonym : string | string = "";
+  
   USERID = '1';
 }

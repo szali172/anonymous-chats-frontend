@@ -1,5 +1,5 @@
 export interface Chat {
-    chatId : number
+    id : number
     groupId : number
-    startDate : Date
+    createdOn : Date
 }

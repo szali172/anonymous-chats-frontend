@@ -14,7 +14,7 @@
 
                   @for (group of userGroups; track group) {
                     <!-- On click makes a new chain call to get all applicable user chats to populate the menu -->
-                    <mat-option [value]="group.id" (click)="getUserChats()">{{group.name}}</mat-option>
+                    <mat-option [value]="group.id" (click)="getUserChats();">{{group.name}}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -23,7 +23,7 @@
     <!--Each nav item is a hyperlink currently and will need ot be converted over to passing info along to the chat window. Could be done by just changing the attribute of selected chatId i think?-->
     <mat-nav-list>
         <div *ngFor="let chat of completeChats, let i = index">
-            <a mat-list-item href="#">Chat {{chat.chat.chatId}}: <span *ngFor="let user of chat.chatUsers">{{user.pseudonym}} </span> </a>
+            <a mat-list-item (click)="selectChatEvent(chat.chat.id)">Chat {{chat.chat.id}}: <span *ngFor="let user of chat.chatUsers">{{user.pseudonym}} </span> </a>
         </div>
     </mat-nav-list>
   </mat-sidenav>
@@ -42,6 +42,9 @@
       <span>anonymous-chats-frontend</span>
     </mat-toolbar>
     <!--selected group id will need to get changed to selected chat and used to pull chat info into the component-->
-    <app-chat-window [selectedGroupId]="selectedGroupId"></app-chat-window>
+    @if (isChatSelected) {
+      <app-chat-window [selectedCompleteChat]="selectedCompleteChat"></app-chat-window>
+    }
+
   </mat-sidenav-content>
 </mat-sidenav-container>

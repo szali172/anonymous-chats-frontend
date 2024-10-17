@@ -1,13 +1,13 @@
-import { Component, inject, Input } from '@angular/core';
-import { ChatWindowComponent } from "../Chat/chat-window/chat-window.component";
+import { Component, inject, Input, ViewChild } from '@angular/core';
+import { ChatWindowComponent } from "../chat-window/chat-window.component";
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { SideMenuComponent } from '../Chat/side-menu/side-menu.component';
-import { ChatMessage } from '../../models/chat-models/chat-message';
-import { ChatUser } from '../../models/chat-models/chat-user';
-import { UserGuess } from '../../models/chat-models/user-guess';
-import { CompleteChat } from '../../models/chat-models/complete-chat';
-import { Chat } from '../../models/chat-models/chat';
-import { ChatService } from '../../services/chat.service';
+import { SideMenuComponent } from '../side-menu/side-menu.component';
+import { ChatMessage } from '../../../models/chat-models/chat-message';
+import { ChatUser } from '../../../models/chat-models/chat-user';
+import { UserGuess } from '../../../models/chat-models/user-guess';
+import { CompleteChat } from '../../../models/chat-models/complete-chat';
+import { Chat } from '../../../models/chat-models/chat';
+import { ChatService } from '../../../services/chat.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,8 +19,8 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms'
-import { Group } from '../../models/group/group';
-import { GroupService } from '../../services/group.service';
+import { Group } from '../../../models/group/group';
+import { GroupService } from '../../../services/group.service';
 
 
 @Component({
@@ -81,12 +81,25 @@ export class ChatPageContainerComponent {
   completeChats: CompleteChat[] = []
   isLoaded: boolean = false
 
-
+  @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
+  
   //on load grab all available chat objects with associated users
   //should look to pass the list of groups down from the group-menu to avoid an extra call
   ngOnInit(): void {
     this.getUserChats()
     this.getUserGroups()
+
+    // Start the SignalR connection and join each of the chats
+    this.chatService.startConnection().then(() => {
+      this.chats.forEach(chat => {
+        this.chatService.joinChatGroup(chat.id);
+      });
+    });
+
+    // Subscribe to incoming messages
+    this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
+      this.handleIncomingMessage(message);
+    });
   }
 
   //shamelessly stolen from groupmenu component
@@ -146,6 +159,18 @@ export class ChatPageContainerComponent {
       console.log(this.completeChats[i])
     }
     this.isLoaded = true;
+  }
+
+  // Handle new incoming messages
+  handleIncomingMessage(message: ChatMessage) {
+    // If the message is for the currently selected chat, add it to the open chat messages
+    if (message.chatId === this.selectedCompleteChat?.chat?.id) {
+      console.log("MESSAGE: ", message);
+      this.chatWindowComponent.openChatMessages.push(message);
+    } else {
+      // Handle notifications for messages in other chats (optional)
+      console.log('New message for another chat:', message);
+    }
   }
 
   //used to map the selected CompleteChat obect and pass it down to the chat window

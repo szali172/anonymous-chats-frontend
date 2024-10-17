@@ -71,7 +71,11 @@ export class ChatWindowComponent {
   }
 
   pullMessagePseudonym(message : ChatMessage): string {
-    return this.chatUsersMapping[message.createdBy].value
+    if (this.chatUsersMapping[message.createdBy] === undefined) {
+      return "Placeholder username";
+    } else {
+      return this.chatUsersMapping[message.createdBy].value
+    }
   }
   
 

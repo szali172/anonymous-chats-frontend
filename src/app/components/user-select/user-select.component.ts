@@ -1,4 +1,4 @@
-import { Component, Input,} from '@angular/core';
+import { Component, inject, Inject, Input,} from '@angular/core';
 import { ReactiveFormsModule, FormControl} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,7 @@ import { ChatService } from '../../services/chat.service';
 import { UserGuess } from '../../models/chat-models/user-guess';
 import { ChatUser } from '../../models/chat-models/chat-user';
 import { UserGuessDTO } from '../../models/chat-models/user-guess-dto';
-import { MatDialogClose } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-user-select',
@@ -57,23 +57,18 @@ export class UserSelectComponent {
   //guesseePseudonyms : Map<string, string> = new Map <string,string>
   guesseePseudonyms: ChatUser[] = [];
   guesseeMapping: Map<UserGuess, ChatUser> = new Map<UserGuess, ChatUser>();
+  currentChat: number = 3;
 
-  @Input() currentChat: number = 3;
 
-  /*
-    TODO: When they open the window we should pull / populate / or get from parent all of the guess objects from the loggedin user for each of the chat Users
-    Pass in it maybe as an array? Make open guess options for each of the passed in Chat Guess Objects.
-    Make a DTO for chat guess updates, will send the ID of the chat guess + the ID of the guessee
-    
+
+
+  /*    
   */
   selectedUsers!: User[];
 
   displayedColumns: string[] = ['id', 'userName', 'email', 'deleteButton'];
 
-  constructor(
-    private userService: UserServiceService,
-    private chatService: ChatService
-  ) {
+  constructor( private userService: UserServiceService, private chatService: ChatService,  @Inject(MAT_DIALOG_DATA) public data: {thisId : number} ) {
     //spin up all users to start with
     this.getAllUsers();
     this.getUserGuesses();
@@ -86,6 +81,9 @@ export class UserSelectComponent {
         return email ? this._filter(email as string) : this.allUsers.slice();
       })
     );
+
+    //map current chat value to passed in item:
+    this.currentChat = this.data.thisId
   }
 
   //actual filtering service based on user input that is being typed

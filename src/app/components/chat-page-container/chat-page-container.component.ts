@@ -166,6 +166,7 @@ export class ChatPageContainerComponent {
 
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
+      data: {thisId : this.selectedChatId},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',

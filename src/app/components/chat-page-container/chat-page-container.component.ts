@@ -21,6 +21,8 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms'
 import { Group } from '../../models/group/group';
 import { GroupService } from '../../services/group.service';
+import { UserSelectComponent } from '../user-select/user-select.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -52,6 +54,7 @@ export class ChatPageContainerComponent {
   private breakpointObserver = inject(BreakpointObserver);
   private groupService = inject(GroupService);
   private chatService = inject(ChatService)
+  readonly dialog = inject(MatDialog)
 
   //Check for if a chat is selected
   isChatSelected : boolean = false
@@ -159,6 +162,22 @@ export class ChatPageContainerComponent {
       if(this.selectedCompleteChat == undefined)
         console.log("Error retreiving complete chat object.")
     }
+  }
+
+  openGuessPage() {
+    const openGuess = this.dialog.open(UserSelectComponent, {
+      width: '75vw',
+      height: '75vh',
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    })
+    openGuess.afterClosed().subscribe(result => {
+      console.log('The guess window was closed')
+      if (result !== undefined) {
+        console.log(result)
+        //do something with guess informaiton here
+      }
+    });
   }
 }
 

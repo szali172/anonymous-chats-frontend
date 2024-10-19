@@ -71,7 +71,9 @@ export class GroupCreatePageComponent {
     this.newGroupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
     })
-
+    
+    this.filteredUsers = this.allUsers.filter(x => !this.selectedUsers.includes(x))
+    
     this.availableUsers = this.userSelectControl.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -130,7 +132,7 @@ export class GroupCreatePageComponent {
 
   private _filter(email: string): User[] {
     const filterValue = email.toLowerCase();
-     this.filteredUsers = this.allUsers.filter(x => !this.selectedUsers.includes(x))
+    this.filteredUsers = this.allUsers.filter(x => !this.selectedUsers.includes(x))
     return this.filteredUsers.filter(user => user.email.toLowerCase().includes(filterValue));
   }
 

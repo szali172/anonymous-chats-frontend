@@ -7,17 +7,19 @@
     <mat-toolbar>
         <mat-toolbar-row>Menu</mat-toolbar-row>
         <!-- Breaks the group selection menu into a specific row for legibility -->
-        <mat-toolbar-row>
+        <!-- <mat-toolbar-row>
             <mat-form-field style="justify-self: flex-end;" subscriptSizing="dynamic">
                 <mat-label >Selected Group</mat-label>
                 <mat-select  [(ngModel)]="selectedGroupId" name="group" >
 
                   @for (group of userGroups; track group) {
-                    <!-- On click makes a new chain call to get all applicable user chats to populate the menu -->
                     <mat-option [value]="group.id" (click)="getUserChats();">{{group.name}}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
+        </mat-toolbar-row> -->
+        <mat-toolbar-row>
+          <button (click)="openGuessPage()">Open Guesses</button>
         </mat-toolbar-row>
     </mat-toolbar>
     <!--Each nav item is a hyperlink currently and will need ot be converted over to passing info along to the chat window. Could be done by just changing the attribute of selected chatId i think?-->
@@ -45,6 +47,7 @@
     @if (isChatSelected) {
       <app-chat-window [selectedCompleteChat]="selectedCompleteChat"></app-chat-window>
     }
+
 
   </mat-sidenav-content>
 </mat-sidenav-container>

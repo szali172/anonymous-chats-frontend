@@ -7,6 +7,7 @@ import { ChatUser } from '../models/chat-models/chat-user';
 import { ChatMessage } from '../models/chat-models/chat-message';
 import { UserGuess } from '../models/chat-models/user-guess';
 import { CreateMessageDto } from '../models/chat-models/create-message-dto';
+import { UserGuessDTO } from '../models/chat-models/user-guess-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +33,8 @@ export class ChatService {
     return this.httpClient.get<UserGuess[]>(`${environment.apiUrl}/${this.location}/guesses/chatId=${chatId}/guesserId=${userId}`)
   }
 
-  updateUserGuess(userGuess : UserGuess): Observable<UserGuess> {
-    return this.httpClient.put<UserGuess>(`${environment.apiUrl}/${this.location}/guesses`, userGuess)
+  updateUserGuess(userGuess : UserGuessDTO): Observable<UserGuessDTO> {
+    return this.httpClient.put<UserGuessDTO>(`${environment.apiUrl}/${this.location}/guesses`, userGuess)
   }
 
   createChatMessage(messageDto :CreateMessageDto): Observable<CreateMessageDto> {

@@ -1,8 +1,8 @@
 export interface UserGuess {
     id : number
     chatId : number
-    guesserId : string
-    guesseeId : string | null
-    actualId : string
+    guesserId : string //who is making the guess
+    guesseeId : string | null //who they think it is
+    actualId : string //who it actually is
     createdOn : Date
 }

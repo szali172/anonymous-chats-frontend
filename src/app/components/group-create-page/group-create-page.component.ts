@@ -15,6 +15,7 @@ import { User } from '../../models/user';
 import { MatTable, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserServiceService } from '../../services/user-service.service';
 import { GroupService } from '../../services/group.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-group-create-page',
@@ -32,6 +33,7 @@ import { GroupService } from '../../services/group.service';
     ReactiveFormsModule,
     AsyncPipe,
     MatTableModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './group-create-page.component.html',
   styleUrl: './group-create-page.component.css'
@@ -46,6 +48,7 @@ export class GroupCreatePageComponent {
   availableUsers : Observable<User[]>
   selectedUsers : User[] = []
   userSelectControl  = new FormControl<string | User> ('')
+  isLoaded : boolean = false
 
   @ViewChild(MatTable) table! : MatTable<any>
 
@@ -65,6 +68,7 @@ export class GroupCreatePageComponent {
       complete: () => {
         console.log('User pull complete.')
         console.log(this.allUsers)
+        this.isLoaded = true
       }
     })
 

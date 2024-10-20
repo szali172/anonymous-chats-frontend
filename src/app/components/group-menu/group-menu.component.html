@@ -1,16 +1,21 @@
-<div class="container">
+@if(isLoaded){
+    <div class="container">
 
-    <h1 id="title" class="noselect">Your Groups</h1>
-
-    <button (click)="openCreateGroupPage()">Create a group</button>
+        <h1 id="title" class="noselect">Your Groups</h1>
     
-    <div id="group-list">
-        <a 
-        class="group-card" 
-        *ngFor="let group of userGroups"
-        [routerLink]="['/chats', group.id]"
-        >
-            {{group.name}}
-        </a>
+        <button (click)="openCreateGroupPage()">Create a group</button>
+        
+        <div id="group-list">
+            <a 
+            class="group-card" 
+            *ngFor="let group of userGroups"
+            [routerLink]="['/chats', group.id]"
+            >
+                {{group.name}}
+            </a>
+        </div>
     </div>
-</div>
+}
+@else {
+    <mat-spinner></mat-spinner>
+}

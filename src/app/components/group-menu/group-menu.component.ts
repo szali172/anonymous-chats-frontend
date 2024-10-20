@@ -1,13 +1,11 @@
-import { Component, inject, ChangeDetectionStrategy} from '@angular/core';
+import { Component, inject} from '@angular/core';
 import { GroupService } from '../../services/group.service';
 import { Group } from '../../models/group/group';
-import { CreateGroupDto } from '../../models/group/create-group-dto';
-import { UpdateGroupDto } from '../../models/group/update-group-dto';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import { MatButtonModule} from '@angular/material/button';
+import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -52,7 +50,11 @@ export class GroupMenuComponent {
   }
 
   openCreateGroupPage() {
-    const createGroup = this.dialog.open(GroupCreatePageComponent)
+    const createGroup = this.dialog.open(GroupCreatePageComponent, {
+      width: '75vw',
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    })
     createGroup.afterClosed().subscribe(result => {
     });
   }

@@ -19,6 +19,7 @@ import { UserGuess } from '../../models/chat-models/user-guess';
 import { ChatUser } from '../../models/chat-models/chat-user';
 import { UserGuessDTO } from '../../models/chat-models/user-guess-dto';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-user-select',
@@ -38,7 +39,8 @@ import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
     MatTableModule,
     DragDropModule,
     CommonModule,
-    MatDialogClose
+    MatDialogClose,
+    MatProgressSpinnerModule
   ],
   templateUrl: './user-select.component.html',
   styleUrl: './user-select.component.css',
@@ -58,6 +60,7 @@ export class UserSelectComponent {
   guesseePseudonyms: ChatUser[] = [];
   guesseeMapping: Map<UserGuess, ChatUser> = new Map<UserGuess, ChatUser>();
   currentChat: number = 3;
+  isLoaded : boolean = false
 
 
 
@@ -217,6 +220,9 @@ export class UserSelectComponent {
 
         console.log('Mapping: ');
         console.log(this.guesseeMapping);
+
+        //clear the loading screen and display information
+        this.isLoaded = true;
       },
     });
   }

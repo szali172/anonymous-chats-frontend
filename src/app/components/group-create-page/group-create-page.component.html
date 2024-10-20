@@ -1,4 +1,4 @@
-
+@if(isLoaded){
 <mat-dialog-content>
   <form [formGroup]="newGroupForm">
       <mat-card class="shipping-card">
@@ -59,4 +59,8 @@
           </mat-card-content>
       </mat-card>
   </form>
+  }
+  @else {
+  <mat-spinner></mat-spinner>
+}
 </mat-dialog-content>

@@ -1,6 +1,6 @@
 import { Component, inject} from '@angular/core';
-import { GroupService } from '../../services/group.service';
-import { Group } from '../../models/group/group';
+import { GroupService } from '../../../services/group.service';
+import { Group } from '../../../models/group/group';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';

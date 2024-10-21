@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { CreateGroupDto } from '../../models/group/create-group-dto';
+import { CreateGroupDto } from '../../../models/group/create-group-dto';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,10 +11,10 @@ import { Observable} from 'rxjs';
 import { map, startWith} from 'rxjs/operators';
 import { AsyncPipe} from '@angular/common';
 import { MatFormFieldModule} from '@angular/material/form-field';
-import { User } from '../../models/user';
+import { User } from '../../../models/user';
 import { MatTable, MatTableModule } from '@angular/material/table';
-import { UserServiceService } from '../../services/user-service.service';
-import { GroupService } from '../../services/group.service';
+import { UserService } from '../../../services/user.service';
+import { GroupService } from '../../../services/group.service';
 import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
@@ -55,7 +55,7 @@ export class GroupCreatePageComponent {
   displayedColumns: string[] = ['id', 'userName', 'email', 'deleteButton'];
   
 
-  constructor(private fb : FormBuilder, private userService : UserServiceService, private groupService : GroupService) {
+  constructor(private fb : FormBuilder, private userService : UserService, private groupService : GroupService) {
 
     userService.getAllUsers().subscribe({
       next:(data) =>  {

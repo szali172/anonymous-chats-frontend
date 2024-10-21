@@ -10,15 +10,15 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { User } from '../../models/user';
+import { User } from '../../../models/user';
 import { MatTableModule} from '@angular/material/table';
-import { UserServiceService } from '../../services/user-service.service';
 import { CdkDragDrop, DragDropModule, moveItemInArray,} from '@angular/cdk/drag-drop';
-import { ChatService } from '../../services/chat.service';
-import { UserGuess } from '../../models/chat-models/user-guess';
-import { ChatUser } from '../../models/chat-models/chat-user';
-import { UserGuessDTO } from '../../models/chat-models/user-guess-dto';
+import { ChatService } from '../../../services/chat.service';
+import { ChatGuess } from '../../../models/chat/chat-guess';
+import { ChatUser } from '../../../models/chat/chat-user';
+import { ChatGuessDTO } from '../../../models/chat/chat-guess-dto';
 import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-user-select',
@@ -53,10 +53,10 @@ export class UserSelectComponent {
     userName: 'user1',
     email: 'user1email@com.us',
   };
-  userGuesses: UserGuess[] = [];
+  userGuesses: ChatGuess[] = [];
   //guesseePseudonyms : Map<string, string> = new Map <string,string>
   guesseePseudonyms: ChatUser[] = [];
-  guesseeMapping: Map<UserGuess, ChatUser> = new Map<UserGuess, ChatUser>();
+  guesseeMapping: Map<ChatGuess, ChatUser> = new Map<ChatGuess, ChatUser>();
   currentChat: number = 3;
 
 
@@ -68,7 +68,7 @@ export class UserSelectComponent {
 
   displayedColumns: string[] = ['id', 'userName', 'email', 'deleteButton'];
 
-  constructor( private userService: UserServiceService, private chatService: ChatService,  @Inject(MAT_DIALOG_DATA) public data: {thisId : number} ) {
+  constructor( private userService: UserService, private chatService: ChatService,  @Inject(MAT_DIALOG_DATA) public data: {thisId : number} ) {
     //spin up all users to start with
     this.getAllUsers();
     this.getUserGuesses();
@@ -247,7 +247,7 @@ export class UserSelectComponent {
   onSubmit() {
     for (let i = 0; i < this.userGuesses.length; i++) {
       this.userGuesses[i].guesseeId = this.selectedUsers[i].id;
-      let updatedGuess : UserGuessDTO = {
+      let updatedGuess : ChatGuessDTO = {
         id: this.userGuesses[i].id,
         guesseeId: this.selectedUsers[i].id,
       }

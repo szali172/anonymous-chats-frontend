@@ -1,0 +1,83 @@
+.popup-modal {
+    height: 30vmax;
+    max-height: 400px;
+    background-color: var(--primary-color);
+    padding: 50px;
+}
+
+#header {
+    font-size: 1.1rem;
+    color: var(--primary-text-color);
+    margin: 10px 20px;
+}
+
+table {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0 0 50px 0;
+}
+
+tr {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-color: #191a1b;
+    color: hsl(218, 39%, 85%);
+    font-size: 1.1rem;
+    font-family: "Inter", serif;
+    margin: 2px 20px;
+    padding: 5px;
+    transition: ease all 1s;
+}
+
+tr:hover {
+    transform: scale(110%);
+    translate: 2px -5px;
+    transition: ease all 0.3s;
+}
+
+tr:hover > * {
+    color: hsl(218, 39%, 100%);
+    transition: ease all 0.5s;
+}
+
+tr > * {
+    transition: ease all 0.5s;
+}
+
+td {
+    display: flex;
+    justify-content: space-between; /* Ensures space between user info and the admin star */
+    align-items: center;
+    width: 100%;
+}
+
+.left-content {
+    display: flex;
+    align-items: center;
+}
+
+#pfp, #username, #admin-star {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#username {
+    margin-left: 10px;
+}
+
+#admin-star {
+    margin-left: auto;
+}
+
+.current-user {
+    color: rgb(222, 189, 0);
+}
+
+.empty-space {
+    height: 50px;
+    width: 100%;
+}

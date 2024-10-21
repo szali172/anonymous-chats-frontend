@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Chat } from '../models/chat-models/chat';
+import { Observable, Subject } from 'rxjs';
+import { Chat } from '../models/chat/chat';
 import { environment } from '../../environments/environment';
-import { ChatUser } from '../models/chat-models/chat-user';
-import { ChatMessage } from '../models/chat-models/chat-message';
-import { UserGuess } from '../models/chat-models/user-guess';
-import { CreateMessageDto } from '../models/chat-models/create-message-dto';
-import { UserGuessDTO } from '../models/chat-models/user-guess-dto';
+import { ChatUser } from '../models/chat/chat-user';
+import { ChatMessage } from '../models/chat/chat-message';
+import { ChatGuess } from '../models/chat/chat-guess';
+import { CreateMessageDto } from '../models/chat/create-message-dto';
+import { ChatGuessDTO } from '../models/chat/chat-guess-dto';
+import * as signalR from '@microsoft/signalr';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,29 +17,66 @@ import { UserGuessDTO } from '../models/chat-models/user-guess-dto';
 export class ChatService {
 
   location = "Chat"
-  constructor(private httpClient :HttpClient) { }
+  private hubConnection: signalR.HubConnection;
+  private messagesSubject = new Subject<ChatMessage>();
 
+  constructor(private httpClient :HttpClient) {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+    .withUrl(`${environment.webSocket}`)
+    .build();
+
+    // Listen for incoming messages
+    this.hubConnection.on('ReceiveMessage', (message: ChatMessage) => {
+      this.messagesSubject.next(message);
+    });
+  }
+
+  // Start the SignalR connection
+  public startConnection(): Promise<void> {
+    return this.hubConnection.start()
+      .then(() => console.log('SignalR connection started'))
+      .catch(err => console.error('Error while starting SignalR connection: ', err));
+  }
+
+  // Join a specific chat group by ChatId
+  public joinChatGroup(chatId: number): Promise<void> {
+    return this.hubConnection.invoke('JoinChatGroup', chatId)
+      .then(() => console.log(`Joined chat group ${chatId}`))
+      .catch(err => console.error('Error while joining chat group: ', err));
+  } 
+
+  // Observable for incoming messages
+  public onMessageReceived(): Observable<ChatMessage> {
+    return this.messagesSubject.asObservable();
+  }
+
+  
+
+
+
+  // Backend endpoints
   getUserChats(userId : string, groupId : number): Observable<Chat[]>{
-    return this.httpClient.get<Chat[]>(`${environment.apiUrl}/${this.location}/chats/userId=${userId}/groupId=${groupId}`)
+    return this.httpClient.get<Chat[]>(`${environment.apiUrl}/${this.location}/Chats/userId=${userId}/groupId=${groupId}`)
   }
 
   getChatUsers(chatId : number): Observable<ChatUser[]>{
-    return this.httpClient.get<ChatUser[]>(`${environment.apiUrl}/${this.location}/users/${chatId}`)
+    return this.httpClient.get<ChatUser[]>(`${environment.apiUrl}/${this.location}/Users/${chatId}`)
   }
 
   getChatMessages(chatId : number):Observable<ChatMessage[]>{
-    return this.httpClient.get<ChatMessage[]>(`${environment.apiUrl}/${this.location}/messages/${chatId}`)
+    return this.httpClient.get<ChatMessage[]>(`${environment.apiUrl}/${this.location}/Messages/${chatId}`)
   }
 
-  getUserGuesses(chatId : number,userId : string): Observable<UserGuess[]>{
-    return this.httpClient.get<UserGuess[]>(`${environment.apiUrl}/${this.location}/guesses/chatId=${chatId}/guesserId=${userId}`)
+  getUserGuesses(chatId : number,userId : string): Observable<ChatGuess[]>{
+    return this.httpClient.get<ChatGuess[]>(`${environment.apiUrl}/${this.location}/Guesses/chatId=${chatId}/guesserId=${userId}`)
   }
 
-  updateUserGuess(userGuess : UserGuessDTO): Observable<UserGuessDTO> {
-    return this.httpClient.put<UserGuessDTO>(`${environment.apiUrl}/${this.location}/guesses`, userGuess)
+  updateUserGuess(userGuessDto : ChatGuessDTO): Observable<void> {
+    return this.httpClient.put<void>(`${environment.apiUrl}/${this.location}/Guesses`, userGuessDto)
   }
 
-  createChatMessage(messageDto :CreateMessageDto): Observable<CreateMessageDto> {
-    return this.httpClient.post<CreateMessageDto>(`${environment.apiUrl}/${this.location}/messages`,messageDto)
+  // Message will be written to the database and broadcasted to all other chatGroup members
+  createChatMessage(messageDto : CreateMessageDto): Observable<ChatMessage> {
+    return this.httpClient.post<ChatMessage>(`${environment.apiUrl}/${this.location}/Messages`, messageDto)
   }
 }

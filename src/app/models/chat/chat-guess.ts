@@ -1,4 +1,4 @@
-export interface UserGuess {
+export interface ChatGuess {
     id : number
     chatId : number
     guesserId : string //who is making the guess

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SideMenuComponent } from './side-menu.component';
+import { EndOfChatInfoComponent } from './end-of-chat-info.component';
 
-describe('SideMenuComponent', () => {
-  let component: SideMenuComponent;
-  let fixture: ComponentFixture<SideMenuComponent>;
+describe('EndOfChatInfoComponent', () => {
+  let component: EndOfChatInfoComponent;
+  let fixture: ComponentFixture<EndOfChatInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SideMenuComponent]
+      imports: [EndOfChatInfoComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SideMenuComponent);
+    fixture = TestBed.createComponent(EndOfChatInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

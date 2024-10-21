@@ -7,12 +7,9 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class UserServiceService {
+export class UserService {
 
-  //will need to revisit once authentication is set up. Most likely will need to change. should've built out a component first before fully building out. 
-  //Still need deep testing.
-
-  private location = "/user/"
+  private location = "/User"
 
   constructor(private httpClient : HttpClient) { }
 

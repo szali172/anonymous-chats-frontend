@@ -1,12 +1,11 @@
 import { Component, inject, Input, ViewChild } from '@angular/core';
 import { ChatWindowComponent } from "../chat-window/chat-window.component";
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { SideMenuComponent } from '../side-menu/side-menu.component';
-import { ChatMessage } from '../../../models/chat-models/chat-message';
-import { ChatUser } from '../../../models/chat-models/chat-user';
-import { ChatGuess } from '../../../models/chat-models/user-guess';
-import { CompleteChat } from '../../../models/chat-models/complete-chat';
-import { Chat } from '../../../models/chat-models/chat';
+import { ChatMessage } from '../../../models/chat/chat-message';
+import { ChatUser } from '../../../models/chat/chat-user';
+import { ChatGuess } from '../../../models/chat/chat-guess';
+import { CompleteChat } from '../../../models/chat/complete-chat';
+import { Chat } from '../../../models/chat/chat';
 import { ChatService } from '../../../services/chat.service';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -24,7 +23,8 @@ import { FormsModule } from '@angular/forms'
 import { Group } from '../../../models/group/group';
 import { GroupService } from '../../../services/group.service';
 import { RouterModule } from '@angular/router';
-import { MembersListComponent } from '../../members-list/members-list.component';
+import { MembersListComponent } from '../members-list/members-list.component';
+import { UserSelectComponent } from '../user-select/user-select.component';
 
 
 @Component({
@@ -33,7 +33,6 @@ import { MembersListComponent } from '../../members-list/members-list.component'
   imports: [
     ChatWindowComponent,
     CommonModule,
-    SideMenuComponent,
     ChatWindowComponent,
     MatSidenavModule,
     MatToolbarModule,
@@ -59,7 +58,8 @@ export class ChatPageContainerComponent {
 
   private breakpointObserver = inject(BreakpointObserver);
   private groupService = inject(GroupService);
-  private chatService = inject(ChatService);
+  private chatService = inject(ChatService)
+  readonly dialog = inject(MatDialog)
 
   //Check for if a chat is selected
   isChatSelected : boolean = false
@@ -82,8 +82,6 @@ export class ChatPageContainerComponent {
   isLoaded: boolean = false
 
   @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
-
-  constructor(public dialog: MatDialog) {}
   
   //on load grab all available chat objects with associated users
   //should look to pass the list of groups down from the group-menu to avoid an extra call
@@ -204,6 +202,24 @@ export class ChatPageContainerComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log('The dialog was closed');
+    });
+  }
+
+
+  openGuessPage() {
+    const openGuess = this.dialog.open(UserSelectComponent, {
+      data: {thisId : this.selectedChatId},
+      width: '75vw',
+      height: '75vh',
+      maxWidth: '90vw',
+      maxHeight: '90vh'
+    })
+    openGuess.afterClosed().subscribe(result => {
+      console.log('The guess window was closed')
+      if (result !== undefined) {
+        console.log(result)
+        //do something with guess informaiton here
+      }
     });
   }
   

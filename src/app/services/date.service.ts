@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Chat } from '../models/chat-models/chat';
+import { Chat } from '../models/chat/chat';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';

@@ -1,14 +1,14 @@
 import { Component, Inject, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GroupService } from '../../services/group.service';
-import { User } from '../../models/user';
+import { GroupService } from '../../../services/group.service';
+import { User } from '../../../models/user';
 import { MatListModule } from '@angular/material/list'; 
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '@auth0/auth0-angular';
-import { Group } from '../../models/group/group';
+import { Group } from '../../../models/group/group';
 
 @Component({
   selector: 'app-members-list',

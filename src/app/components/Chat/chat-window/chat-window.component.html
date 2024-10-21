@@ -11,7 +11,7 @@
         </div>
         
         <!-- Display chat closed section -->
-        @if (!isChatClosed) {
+        @if (isChatClosed) {
             <app-end-of-chat-info 
                 [chatId]="selectedCompleteChat.chat.id"
                 [chatUsersMapping]="chatUsersMapping">
@@ -19,7 +19,7 @@
         }
     </cdk-virtual-scroll-viewport>
 
-    @if (isChatClosed) {
+    @if (!isChatClosed) {
         <div class="input-bar">
             <mat-form-field class="input-field">
                 <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>

@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Chat } from '../models/chat-models/chat';
+import { Chat } from '../models/chat/chat';
 import { environment } from '../../environments/environment';
-import { ChatUser } from '../models/chat-models/chat-user';
-import { ChatMessage } from '../models/chat-models/chat-message';
-import { ChatGuess } from '../models/chat-models/user-guess';
-import { CreateMessageDto } from '../models/chat-models/create-message-dto';
+import { ChatUser } from '../models/chat/chat-user';
+import { ChatMessage } from '../models/chat/chat-message';
+import { ChatGuess } from '../models/chat/chat-guess';
+import { CreateMessageDto } from '../models/chat/create-message-dto';
+import { ChatGuessDTO } from '../models/chat/chat-guess-dto';
 import * as signalR from '@microsoft/signalr';
 
 
@@ -70,8 +71,8 @@ export class ChatService {
     return this.httpClient.get<ChatGuess[]>(`${environment.apiUrl}/${this.location}/Guesses/chatId=${chatId}/guesserId=${userId}`)
   }
 
-  updateUserGuess(userGuess : ChatGuess): Observable<void> {
-    return this.httpClient.put<void>(`${environment.apiUrl}/${this.location}/Guesses`, userGuess)
+  updateUserGuess(userGuessDto : ChatGuessDTO): Observable<void> {
+    return this.httpClient.put<void>(`${environment.apiUrl}/${this.location}/Guesses`, userGuessDto)
   }
 
   // Message will be written to the database and broadcasted to all other chatGroup members

@@ -1,11 +1,11 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
-import { ChatMessage } from '../../../models/chat-models/chat-message';
-import { CreateMessageDto } from '../../../models/chat-models/create-message-dto';
+import { ChatMessage } from '../../../models/chat/chat-message';
+import { CreateMessageDto } from '../../../models/chat/create-message-dto';
 import { MessageComponent } from "../message/message.component";
-import { ChatUser } from '../../../models/chat-models/chat-user';
-import { CompleteChat } from '../../../models/chat-models/complete-chat';
+import { ChatUser } from '../../../models/chat/chat-user';
+import { CompleteChat } from '../../../models/chat/complete-chat';
 import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatInputModule } from '@angular/material/input';

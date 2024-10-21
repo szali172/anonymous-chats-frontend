@@ -5,7 +5,7 @@ import { EndOfChatUserTableComponent } from "../end-of-chat-user-table/end-of-ch
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@auth0/auth0-angular';
-import { ChatGuess } from '../../../models/chat-models/user-guess';
+import { ChatGuess } from '../../../models/chat/chat-guess';
 import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/user';
 import { forkJoin, Observable, of } from 'rxjs';

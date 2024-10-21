@@ -6,7 +6,7 @@
         [matTooltip]="name === '' ? 'No guess taken for this user' : ''"
         matTooltipPosition="below"
         [ngClass]="name === '' ? 'empty-tr' : 'normal-tr'">
-            <td *ngIf="name !== ''; empty_guess">
+            <td *ngIf="name !== ''; else empty_guess">
                 <div class="left-content">
                     <mat-icon id="pfp">person</mat-icon>
                     <span id="username" class="noselect">
@@ -18,9 +18,7 @@
                     <ng-template #incorrect><mat-icon id="incorrect-icon">close</mat-icon></ng-template>
                 }
             </td>
-            <ng-template #empty_guess>
-
-            </ng-template>
+            <ng-template #empty_guess></ng-template>
         </tr>
     </table>
 </div>

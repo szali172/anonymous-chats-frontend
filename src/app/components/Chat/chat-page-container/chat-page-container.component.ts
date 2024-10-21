@@ -12,8 +12,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule, MatMenuItem } from '@angular/material/menu';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { map, Observable, shareReplay } from 'rxjs';
+import { map, Observable, shareReplay, interval, Subscription } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,6 +26,8 @@ import { GroupService } from '../../../services/group.service';
 import { RouterModule } from '@angular/router';
 import { MembersListComponent } from '../members-list/members-list.component';
 import { UserSelectComponent } from '../user-select/user-select.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DateService } from '../../../services/date.service';
 
 
 @Component({
@@ -40,6 +43,8 @@ import { UserSelectComponent } from '../user-select/user-select.component';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatMenuModule, MatMenuItem,
+    MatTooltipModule,
     ScrollingModule,
     AsyncPipe,
     ChatWindowComponent,
@@ -55,10 +60,12 @@ import { UserSelectComponent } from '../user-select/user-select.component';
 
 
 export class ChatPageContainerComponent {
+  @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
 
   private breakpointObserver = inject(BreakpointObserver);
   private groupService = inject(GroupService);
-  private chatService = inject(ChatService)
+  private chatService = inject(ChatService);
+  private dateService = inject(DateService);
   readonly dialog = inject(MatDialog)
 
   //Check for if a chat is selected
@@ -80,8 +87,9 @@ export class ChatPageContainerComponent {
   chats : Chat[] = []
   completeChats: CompleteChat[] = []
   isLoaded: boolean = false
-
-  @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
+  
+  remainingTime: string = ''; // Timer display value
+  private timerSubscription!: Subscription; // To unsubscribe from the timer
   
   //on load grab all available chat objects with associated users
   //should look to pass the list of groups down from the group-menu to avoid an extra call
@@ -107,9 +115,10 @@ export class ChatPageContainerComponent {
     this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
       this.userGroups = groups
       console.log(groups);
-      })
-    }
+    })
+  }
   
+
   //on successful pull of user chat list, starts pulling user chats
   getUserChats() {
     this.chatService.getUserChats(this.loggedInUser,this.selectedGroup!.id).subscribe({
@@ -126,6 +135,7 @@ export class ChatPageContainerComponent {
       }
     })
   }
+
 
   //on success of pulling all chat users, starts the process to consolidate into a single user chat object
   getChatUsers(){
@@ -148,12 +158,22 @@ export class ChatPageContainerComponent {
     }
   }
 
+
   getChatPseudonymsAsString(chat?: CompleteChat | null) : string {
     if (chat) {
       return chat.chatUsers.map(x => x.pseudonym).join(', ');
     }
     return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym).join(', ');
   }
+
+
+  getChatPseudonymsAsArray(chat?: CompleteChat | null) : string[] {
+    if (chat) {
+      return chat.chatUsers.map(x => x.pseudonym);
+    }
+    return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym);
+  }
+
 
   //this should be refactored to use filters as the data isn't super reliable
   buildUserChats() { 
@@ -168,6 +188,7 @@ export class ChatPageContainerComponent {
     this.isLoaded = true;
   }
 
+
   // Handle new incoming messages
   handleIncomingMessage(message: ChatMessage) {
     // If the message is for the currently selected chat, add it to the open chat messages
@@ -180,6 +201,7 @@ export class ChatPageContainerComponent {
     }
   }
 
+
   //used to map the selected CompleteChat obect and pass it down to the chat window
   selectChatEvent(inputChatId : number) {
     this.isChatSelected = !this.isChatSelected
@@ -190,18 +212,17 @@ export class ChatPageContainerComponent {
       console.log(this.selectedCompleteChat)
       if(this.selectedCompleteChat == undefined)
         console.log("Error retreiving complete chat object.")
+
+      // Start the timer
+      this.startTimer();
     }
   }
 
 
-  openDialog(): void {
+  openMembersList(): void {
     const dialogRef = this.dialog.open(MembersListComponent, {
       maxWidth: "lg",
       data: { groupObject: this.selectedGroup }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 
@@ -221,6 +242,59 @@ export class ChatPageContainerComponent {
         //do something with guess informaiton here
       }
     });
+  }
+
+
+  isChatClosed() : boolean {
+    return this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+  }
+
+  
+  getRemainingTime(): string {
+    return this.dateService.getRemainingTime(this.selectedCompleteChat.chat);
+  }
+
+  isTimeBelowTenMinutes(): boolean {
+    return this.dateService.isTimeBelowTenMinutes(this.selectedCompleteChat.chat);
+  }
+
+
+  ngOnDestroy(): void {
+    // Clean up the timer when the component is destroyed
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+  }
+
+
+  // Calculate the remaining time until the chat closes
+  private startTimer(): void {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe(); // Unsubscribe from any previous timer
+    }
+
+    // Update every second
+    this.timerSubscription = interval(1000).subscribe(() => {
+      const chatCreationTime = new Date(this.selectedCompleteChat.chat.createdOn);
+      const now = new Date();
+
+      const diff = 24 * 60 * 60 * 1000 - (now.getTime() - chatCreationTime.getTime()); // 24 hours in milliseconds
+
+      if (diff <= 0) {
+        this.remainingTime = '00:00'; // Timer reached 00:00
+      } else {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        this.remainingTime = `${this.padTime(hours)}:${this.padTime(minutes)}`;
+        console.log(this.remainingTime);
+      }
+    });
+  }
+
+  // Helper function to pad the time with a leading zero if needed
+  padTime(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
   }
   
 

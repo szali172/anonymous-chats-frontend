@@ -12,8 +12,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule, MatMenuItem } from '@angular/material/menu';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { map, Observable, shareReplay } from 'rxjs';
+import { map, Observable, shareReplay, interval, Subscription } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,6 +26,8 @@ import { GroupService } from '../../../services/group.service';
 import { RouterModule } from '@angular/router';
 import { MembersListComponent } from '../members-list/members-list.component';
 import { UserSelectComponent } from '../user-select/user-select.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { DateService } from '../../../services/date.service';
 
 
 @Component({
@@ -40,6 +43,8 @@ import { UserSelectComponent } from '../user-select/user-select.component';
     MatSidenavModule,
     MatListModule,
     MatIconModule,
+    MatMenuModule, MatMenuItem,
+    MatTooltipModule,
     ScrollingModule,
     AsyncPipe,
     ChatWindowComponent,
@@ -55,15 +60,16 @@ import { UserSelectComponent } from '../user-select/user-select.component';
 
 
 export class ChatPageContainerComponent {
+  @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
 
   private breakpointObserver = inject(BreakpointObserver);
   private groupService = inject(GroupService);
-  private chatService = inject(ChatService)
+  private chatService = inject(ChatService);
+  private dateService = inject(DateService);
   readonly dialog = inject(MatDialog)
 
   //Check for if a chat is selected
   isChatSelected : boolean = false
-  selectedChatId : number = 0
   selectedCompleteChat! : CompleteChat;
   @Input({required : true}) selectedGroup : Group = history.state;
   
@@ -80,8 +86,9 @@ export class ChatPageContainerComponent {
   chats : Chat[] = []
   completeChats: CompleteChat[] = []
   isLoaded: boolean = false
-
-  @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
+  
+  remainingTime: string = ''; // Timer display value
+  private timerSubscription!: Subscription; // To unsubscribe from the timer
   
   //on load grab all available chat objects with associated users
   //should look to pass the list of groups down from the group-menu to avoid an extra call
@@ -102,14 +109,23 @@ export class ChatPageContainerComponent {
     });
   }
 
+
+  ngOnDestroy(): void {
+    // Clean up the timer when the component is destroyed
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+  }
+  
+
   //shamelessly stolen from groupmenu component
   getUserGroups() {
     this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
       this.userGroups = groups
-      console.log(groups);
-      })
-    }
+    })
+  }
   
+
   //on successful pull of user chat list, starts pulling user chats
   getUserChats() {
     this.chatService.getUserChats(this.loggedInUser,this.selectedGroup!.id).subscribe({
@@ -120,18 +136,17 @@ export class ChatPageContainerComponent {
         console.error('Error pulling all chats', error)
       },
       complete: () => {
-        console.log('Chat pull complete.')
-        console.log(this.chats)
+        console.debug('Chat pull complete.')
         this.getChatUsers()
       }
     })
   }
 
+
   //on success of pulling all chat users, starts the process to consolidate into a single user chat object
-  getChatUsers(){
+  getChatUsers() {
     for(var i of this.chats)
     {
-      console.log(i)
     //Add Users to the chat object
       this.chatService.getChatUsers(i.id).subscribe({
         next:(data) => {
@@ -141,12 +156,13 @@ export class ChatPageContainerComponent {
           console.error('Error pulling all Chat Users', error)
         },
         complete: () => {
-          console.log('Chat User pull complete.')
+          console.debug('Chat User pull complete.')
           this.buildUserChats()
         }
       })
     }
   }
+
 
   getChatPseudonymsAsString(chat?: CompleteChat | null) : string {
     if (chat) {
@@ -154,6 +170,15 @@ export class ChatPageContainerComponent {
     }
     return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym).join(', ');
   }
+
+
+  getChatPseudonymsAsArray(chat?: CompleteChat | null) : string[] {
+    if (chat) {
+      return chat.chatUsers.map(x => x.pseudonym);
+    }
+    return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym);
+  }
+
 
   //this should be refactored to use filters as the data isn't super reliable
   buildUserChats() { 
@@ -163,10 +188,10 @@ export class ChatPageContainerComponent {
         chat: this.chats[i],
         chatUsers: this.allChatUsers[i]
       })
-      console.log(this.completeChats[i])
     }
     this.isLoaded = true;
   }
+
 
   // Handle new incoming messages
   handleIncomingMessage(message: ChatMessage) {
@@ -180,46 +205,74 @@ export class ChatPageContainerComponent {
     }
   }
 
+
   //used to map the selected CompleteChat obect and pass it down to the chat window
   selectChatEvent(inputChatId : number) {
+    if (this.selectedCompleteChat && inputChatId === this.selectedCompleteChat.chat.id) {
+      return;
+    }
+
     this.isChatSelected = !this.isChatSelected
     if (this.isChatSelected)
     {
       // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
       this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId)!;
-      console.log(this.selectedCompleteChat)
-      if(this.selectedCompleteChat == undefined)
-        console.log("Error retreiving complete chat object.")
+      
+      if(this.selectedCompleteChat === undefined) {
+        console.error("Error retreiving complete chat object.");
+      }
+
+      this.startTimer();
     }
   }
 
 
-  openDialog(): void {
+  openMembersList(): void {
     const dialogRef = this.dialog.open(MembersListComponent, {
       maxWidth: "lg",
       data: { groupObject: this.selectedGroup }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 
 
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedChatId},
+      data: {thisId : this.selectedCompleteChat.chat.id},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',
       maxHeight: '90vh'
     })
     openGuess.afterClosed().subscribe(result => {
-      console.log('The guess window was closed')
       if (result !== undefined) {
         console.log(result)
-        //do something with guess informaiton here
+        //do something with guess information here
       }
+    });
+  }
+
+
+  isChatClosed() : boolean {
+    return this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+  }
+
+  
+  getRemainingTime(): string {
+    return this.dateService.getRemainingTime(this.selectedCompleteChat.chat);
+  }
+
+  isTimeBelowTenMinutes(): boolean {
+    return this.dateService.isTimeBelowTenMinutes(this.selectedCompleteChat.chat);
+  }
+
+
+  private startTimer(): void {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe(); // Unsubscribe from any previous timer
+    }
+
+    this.timerSubscription = interval(1000).subscribe(() => {
+      this.remainingTime = this.getRemainingTime();
     });
   }
   

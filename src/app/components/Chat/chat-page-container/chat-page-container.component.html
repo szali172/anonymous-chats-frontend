@@ -15,7 +15,7 @@
         </mat-toolbar-row>
 
         <mat-toolbar-row class="sidenav-row">
-          <a mat-fab class="sidenav-button" extended (click)="openDialog()">
+          <a mat-fab class="sidenav-button" extended (click)="openMembersList()">
             <mat-icon>people_outline</mat-icon>
             All Members
           </a>
@@ -38,7 +38,7 @@
 
   <!--Adds a button if the screensize gets so low that its related to mobile-->
   <mat-sidenav-content>
-    <mat-toolbar class="chat-window-header">
+    <mat-toolbar class="chat-header-container">
       
       @if (isHandset$ | async) {
         <button
@@ -50,9 +50,51 @@
         </button>
       }
 
-      <h3 class="chat-name" *ngIf="selectedCompleteChat; else no_chat_name">
-        {{getChatPseudonymsAsString()}}
-      </h3>
+      <div class="chat-header" *ngIf="selectedCompleteChat; else no_chat_name">
+
+        <h3 id="chat-name">
+          {{getChatPseudonymsAsString()}}
+        </h3>
+
+        <div id="chat-header-right">
+          <div id="chat-timer">
+            <span [ngClass]="{ 'red-text': isTimeBelowTenMinutes() }">Time Left: {{ getRemainingTime() }}</span>
+          </div>
+  
+          <button 
+            [matMenuTriggerFor]="chatUsersMenu"
+            id="chat-guess-button" 
+            [matTooltip]="'Chat Users'"
+            [matTooltipPosition]="'left'"
+            [matTooltipShowDelay]="500"
+            [matTooltipHideDelay]="1000">
+            <mat-icon [inline]="true">theater_comedy</mat-icon>
+          </button>
+        </div>
+        
+        <mat-menu #chatUsersMenu="matMenu" class="chat-user-menu">
+          <tr *ngFor="let secretIdentity of getChatPseudonymsAsArray(selectedCompleteChat)"
+              class="chat-user-menu-tr">
+            <td class="chat-user-menu-td">
+              <mat-icon id="chat-user-menu-pfp">person</mat-icon>
+              <span id="chat-user-menu-username" class="noselect">
+                  {{secretIdentity}}
+              </span>
+            </td>
+          </tr>
+
+          <button 
+            id="make-guess-button" 
+            mat-menu-item 
+            [disabled]="isChatClosed()"
+            [matTooltip]="isChatClosed() ? '': 'Guess the identities of the other chat members'"
+            [matTooltipPosition]="'left'"
+            (click)="openGuessPage()">
+            Make Guess
+          </button>
+        </mat-menu>
+
+      </div>
       <ng-template class="chat-name" #no_chat_name></ng-template>
 
     </mat-toolbar>

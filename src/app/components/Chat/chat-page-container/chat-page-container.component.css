@@ -70,16 +70,115 @@ mat-toolbar .mat-primary {
   transition: ease all 0.3s;
 }
 
-.chat-name {
-  color: var(--primary-text-color);
-}
-
-.chat-window-header {
+.chat-header-container {
   background-color: var(--ternary-color);
+  width: 100%;
 }
 
-.chat-window {
-  background-color: var(--primary-color);
-  width: 75vw;
-  height: 100vh;
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-right: 20px;
+}
+
+#chat-name {
+  color: var(--primary-text-color);
+  flex-grow: 1;
+}
+
+#chat-header-right {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+#chat-timer {
+  color: lightgoldenrodyellow;
+  font-family: "Inter", serif;
+  font-size: 0.9rem;
+  flex-grow: 1;
+}
+
+.red-text {
+  color: crimson;
+}
+
+#chat-guess-button {
+  background-color: var(--ternary-color);
+  color: var(--primary-text-color);
+  border: 0;
+  font-size: 2rem;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: ease all 0.3s;
+}
+
+#chat-guess-button:hover {
+  transform: scale(120%);
+  transition: ease-out all 0.3s;
+}
+
+::ng-deep .mat-menu-content{
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.chat-user-menu-tr {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background-color: #191a1b;
+  color: hsl(218, 39%, 85%);
+  font-size: 1.1rem;
+  font-family: "Inter", serif;
+  min-height: 30px;
+  margin-bottom: 0.5px;
+  padding: 5px;
+  transition: ease all 1s;
+}
+
+.chat-user-menu-tr:hover {
+  
+  transition: ease all 0.3s;
+}
+
+.chat-user-menu-tr:hover > * {
+  transition: ease all 0.5s;
+}
+
+.chat-user-menu-tr > * {
+  transition: ease all 0.5s;
+}
+
+.chat-user-menu-td {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+#chat-user-menu-pfp, #chat-user-menu-username {
+  display: inline-block;
+  vertical-align: middle;
+  color: hsl(218, 39%, 85%);
+}
+
+#chat-user-menu-username {
+  margin-left: 10px;
+}
+
+#make-guess-button {
+  background-color: rgb(75, 75, 75);
+  color: white;
+  transition: ease all 0.2s;
+}
+
+#make-guess-button:hover {
+  background-color: rgb(126, 126, 126);
+  color: rgb(50, 50, 50);
+  transition: ease all 0.2s;
 }

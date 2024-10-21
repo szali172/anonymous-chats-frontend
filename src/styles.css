@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;1,14..32,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,500;1,500&display=swap');
 
 body, html {
     font-family: "Inter", sans-serif;
-    background-color: rgb(39, 37, 52);
+    background-color: var(--primary-color);
 }
 
 /* This class disables text highlighting */
@@ -18,3 +19,12 @@ body, html {
   }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+:root {
+  --primary-color: #181414;
+  --primary-text-color: white;
+  --secondary-color: #402c3c;
+  --secondary-text-color: white;
+  --ternary-color: #231e1e;
+}

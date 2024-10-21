@@ -1,12 +1,15 @@
 <div class="container">
 
     <h1 id="title" class="noselect">Your Groups</h1>
+
+    <button (click)="openCreateGroupPage()">Create a group</button>
     
     <div id="group-list">
         <a 
         class="group-card" 
         *ngFor="let group of userGroups"
-        [routerLink]="['/chats', group.id]"
+        [routerLink]="'/chats'"
+        [state]="group"
         >
             {{group.name}}
         </a>

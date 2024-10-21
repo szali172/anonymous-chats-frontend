@@ -1,12 +1,21 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+.loginCard {
+  display: flex;
+  padding: 20px;
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+}
 
-  /* .loginContainer {
-
-
-    
-  } */
+.mainContainer {
+display: flex;
+height: 100vh;
+width: 100vw;
+margin:auto;
+}
+.loginContent{
+  display: flex;
+  padding: 10px;
+  justify-content: center;
+  align-content: center;
+  margin: auto;
+}

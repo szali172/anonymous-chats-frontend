@@ -51,7 +51,6 @@ export class EndOfChatInfoComponent {
     dict['1'] = 'Lion';
     dict['16'] = 'Bear';
     dict['17'] = 'Wolf';
-    console.log("userGuesses fr fr: ", userGuesses)
 
     // Prepare arrays of observables for fetching guessed and actual usernames
     const guessedUsernameObservables: Observable<string>[] = [];

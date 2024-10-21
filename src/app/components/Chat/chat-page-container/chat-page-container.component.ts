@@ -70,7 +70,6 @@ export class ChatPageContainerComponent {
 
   //Check for if a chat is selected
   isChatSelected : boolean = false
-  selectedChatId : number = 0
   selectedCompleteChat! : CompleteChat;
   @Input({required : true}) selectedGroup : Group = history.state;
   
@@ -110,11 +109,19 @@ export class ChatPageContainerComponent {
     });
   }
 
+
+  ngOnDestroy(): void {
+    // Clean up the timer when the component is destroyed
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+  }
+  
+
   //shamelessly stolen from groupmenu component
   getUserGroups() {
     this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
       this.userGroups = groups
-      console.log(groups);
     })
   }
   
@@ -129,8 +136,7 @@ export class ChatPageContainerComponent {
         console.error('Error pulling all chats', error)
       },
       complete: () => {
-        console.log('Chat pull complete.')
-        console.log(this.chats)
+        console.debug('Chat pull complete.')
         this.getChatUsers()
       }
     })
@@ -138,10 +144,9 @@ export class ChatPageContainerComponent {
 
 
   //on success of pulling all chat users, starts the process to consolidate into a single user chat object
-  getChatUsers(){
+  getChatUsers() {
     for(var i of this.chats)
     {
-      console.log(i)
     //Add Users to the chat object
       this.chatService.getChatUsers(i.id).subscribe({
         next:(data) => {
@@ -151,7 +156,7 @@ export class ChatPageContainerComponent {
           console.error('Error pulling all Chat Users', error)
         },
         complete: () => {
-          console.log('Chat User pull complete.')
+          console.debug('Chat User pull complete.')
           this.buildUserChats()
         }
       })
@@ -183,7 +188,6 @@ export class ChatPageContainerComponent {
         chat: this.chats[i],
         chatUsers: this.allChatUsers[i]
       })
-      console.log(this.completeChats[i])
     }
     this.isLoaded = true;
   }
@@ -204,16 +208,20 @@ export class ChatPageContainerComponent {
 
   //used to map the selected CompleteChat obect and pass it down to the chat window
   selectChatEvent(inputChatId : number) {
+    if (this.selectedCompleteChat && inputChatId === this.selectedCompleteChat.chat.id) {
+      return;
+    }
+
     this.isChatSelected = !this.isChatSelected
     if (this.isChatSelected)
     {
       // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
       this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId)!;
-      console.log(this.selectedCompleteChat)
-      if(this.selectedCompleteChat == undefined)
-        console.log("Error retreiving complete chat object.")
+      
+      if(this.selectedCompleteChat === undefined) {
+        console.error("Error retreiving complete chat object.");
+      }
 
-      // Start the timer
       this.startTimer();
     }
   }
@@ -229,17 +237,16 @@ export class ChatPageContainerComponent {
 
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedChatId},
+      data: {thisId : this.selectedCompleteChat.chat.id},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',
       maxHeight: '90vh'
     })
     openGuess.afterClosed().subscribe(result => {
-      console.log('The guess window was closed')
       if (result !== undefined) {
         console.log(result)
-        //do something with guess informaiton here
+        //do something with guess information here
       }
     });
   }
@@ -259,42 +266,14 @@ export class ChatPageContainerComponent {
   }
 
 
-  ngOnDestroy(): void {
-    // Clean up the timer when the component is destroyed
-    if (this.timerSubscription) {
-      this.timerSubscription.unsubscribe();
-    }
-  }
-
-
-  // Calculate the remaining time until the chat closes
   private startTimer(): void {
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe(); // Unsubscribe from any previous timer
     }
 
-    // Update every second
     this.timerSubscription = interval(1000).subscribe(() => {
-      const chatCreationTime = new Date(this.selectedCompleteChat.chat.createdOn);
-      const now = new Date();
-
-      const diff = 24 * 60 * 60 * 1000 - (now.getTime() - chatCreationTime.getTime()); // 24 hours in milliseconds
-
-      if (diff <= 0) {
-        this.remainingTime = '00:00'; // Timer reached 00:00
-      } else {
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-        this.remainingTime = `${this.padTime(hours)}:${this.padTime(minutes)}`;
-        console.log(this.remainingTime);
-      }
+      this.remainingTime = this.getRemainingTime();
     });
-  }
-
-  // Helper function to pad the time with a leading zero if needed
-  padTime(value: number): string {
-    return value < 10 ? `0${value}` : `${value}`;
   }
   
 

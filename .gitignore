@@ -44,3 +44,4 @@ Thumbs.db
 # Secrets
 environment.ts
 environment.development.ts
+environment.prod.ts

@@ -5,7 +5,7 @@ import { Chat } from '../models/chat-models/chat';
 import { environment } from '../../environments/environment';
 import { ChatUser } from '../models/chat-models/chat-user';
 import { ChatMessage } from '../models/chat-models/chat-message';
-import { UserGuess } from '../models/chat-models/user-guess';
+import { ChatGuess } from '../models/chat-models/user-guess';
 import { CreateMessageDto } from '../models/chat-models/create-message-dto';
 import * as signalR from '@microsoft/signalr';
 
@@ -21,7 +21,7 @@ export class ChatService {
 
   constructor(private httpClient :HttpClient) {
     this.hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl(`${environment.webSocket}/ChatHub`)
+    .withUrl(`${environment.webSocket}`)
     .build();
 
     // Listen for incoming messages
@@ -66,11 +66,11 @@ export class ChatService {
     return this.httpClient.get<ChatMessage[]>(`${environment.apiUrl}/${this.location}/Messages/${chatId}`)
   }
 
-  getUserGuesses(chatId : number,userId : string): Observable<UserGuess[]>{
-    return this.httpClient.get<UserGuess[]>(`${environment.apiUrl}/${this.location}/Guesses/chatId=${chatId}/guesserId=${userId}`)
+  getUserGuesses(chatId : number,userId : string): Observable<ChatGuess[]>{
+    return this.httpClient.get<ChatGuess[]>(`${environment.apiUrl}/${this.location}/Guesses/chatId=${chatId}/guesserId=${userId}`)
   }
 
-  updateUserGuess(userGuess : UserGuess): Observable<void> {
+  updateUserGuess(userGuess : ChatGuess): Observable<void> {
     return this.httpClient.put<void>(`${environment.apiUrl}/${this.location}/Guesses`, userGuess)
   }
 

@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="divider-with-label">
+        <div class="line"><mat-divider></mat-divider></div>
+        <div class="divider-text mat-typography">Chat Closed</div>
+        <div class="line"><mat-divider></mat-divider></div>
+    </div>
+
+    <div class="tables-container">
+        <app-end-of-chat-user-table
+            [names]="memberPseudonyms"
+            [tableHeader]="'Chat Members'">
+        </app-end-of-chat-user-table>
+
+        <app-end-of-chat-user-table
+            [names]="guessedUsernames"
+            [tableHeader]="'You Guessed'"
+            [correctUsernames]="getCorrectGuesses()">
+        </app-end-of-chat-user-table>
+
+        <app-end-of-chat-user-table
+            [names]="actualUsernames"
+            [tableHeader]="'Real Identities'"
+            [correctUsernames]="getCorrectGuesses()">
+        </app-end-of-chat-user-table>
+    </div>
+    <div class="empty-space"></div>
+</div>

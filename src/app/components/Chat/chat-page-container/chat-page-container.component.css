@@ -1,17 +1,85 @@
 .sidenav-container {
-    height: 100%;
-  }
+  background-color: var(--ternary-color);
+  height: 100%;
+  overflow: hidden;
+}
   
-  .sidenav {
-    width: 300px;
-  }
-  
-  .sidenav .mat-toolbar {
-    background: inherit;
-  }
-  
-  .mat-toolbar.mat-primary {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
+.sidenav {
+  background-color: var(--secondary-color);
+  min-width: 200px;
+  width: 20vw;
+}
+
+.sidenav .mat-toolbar {
+  background: var(--secondary-color);
+}
+
+mat-toolbar .mat-primary {
+  background-color: var(--secondary-color);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+#chats-header {
+  color: rgb(216, 216, 216);
+  font-family: "Open Sans", serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin: 15px 0 0 15px;
+}
+
+#chats-line-break {
+  margin: 0 40px 0 15px;
+  border-radius: 5px;
+}
+
+#group-name {
+  display: flex;
+  justify-content: flex-start;
+  color: var(--secondary-text-color);
+  font-family: "Open Sans", serif;
+  font-weight: 600;
+}
+
+.sidenav-row {
+  display: flex;
+  justify-content: center;
+}
+
+.sidenav-button {
+  width: 100%;
+  max-width: 200px;
+  height: 75%;
+}
+
+.chat-card {
+  border-radius: 0;
+  width: 100%;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  padding: 10px;
+  transition: ease all 0.3s;
+}
+
+.chat-card:hover {
+  translate: 10px 0;
+  transform: scale(110%);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: ease all 0.3s;
+}
+
+.chat-name {
+  color: var(--primary-text-color);
+}
+
+.chat-window-header {
+  background-color: var(--ternary-color);
+}
+
+.chat-window {
+  background-color: var(--primary-color);
+  width: 75vw;
+  height: 100vh;
+}

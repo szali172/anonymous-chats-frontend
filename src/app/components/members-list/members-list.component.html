@@ -1,0 +1,28 @@
+<cdk-virtual-scroll-viewport class="popup-modal" itemSize="20">
+    <h3 id="header" class="noselect">"{{group.name}}" Members</h3>
+
+    <table>
+        <tr *cdkVirtualFor="let user of groupMembers" 
+            [matTooltip]="isGroupAdmin(user.id) ? 'Group Admin' : ''" 
+            matTooltipPosition="right">
+            <td [ngClass]="isCurrentUser(user.id) ? 'current-user' : ''">
+                <div class="left-content">
+
+                    <mat-icon id="pfp">person</mat-icon>
+                    <span id="username" class="noselect" *ngIf="isCurrentUser(user.id); else other_user">
+                        {{user.userName}} (You)
+                    </span>
+                    <ng-template #other_user>
+                        <span id="username" class="noselect">
+                            {{user.userName}}
+                        </span>
+                    </ng-template>
+
+                </div>
+                <mat-icon *ngIf="isGroupAdmin(user.id)" id="admin-star">star</mat-icon>
+            </td>
+        </tr>
+    </table>
+
+    <div class="empty-space"></div>
+</cdk-virtual-scroll-viewport>

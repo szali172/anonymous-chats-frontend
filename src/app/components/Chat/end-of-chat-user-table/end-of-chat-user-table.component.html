@@ -1,0 +1,26 @@
+<div class="container">
+    <h3 id="table-header">{{tableHeader}}</h3>
+    <table>
+        <tr 
+        *ngFor="let name of names"
+        [matTooltip]="name === '' ? 'No guess taken for this user' : ''"
+        matTooltipPosition="below"
+        [ngClass]="name === '' ? 'empty-tr' : 'normal-tr'">
+            <td *ngIf="name !== ''; empty_guess">
+                <div class="left-content">
+                    <mat-icon id="pfp">person</mat-icon>
+                    <span id="username" class="noselect">
+                        {{name}}
+                    </span>
+                </div>
+                @if (correctUsernames) {
+                    <mat-icon *ngIf="correctUsernames.includes(name); else incorrect" id="correct-icon">check</mat-icon>
+                    <ng-template #incorrect><mat-icon id="incorrect-icon">cancel</mat-icon></ng-template>
+                }
+            </td>
+            <ng-template #empty_guess>
+
+            </ng-template>
+        </tr>
+    </table>
+</div>

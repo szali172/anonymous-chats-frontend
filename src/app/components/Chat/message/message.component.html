@@ -1,10 +1,12 @@
 <div class="container" [ngClass]="USERID === author ? 'container-right' : 'container-left'">
-    <span>{{author}}</span>
+    <span class="sender-name" *ngIf="!repeatedAuthor">{{pseudonym}}</span>
     <div class="message-box" 
-        [ngClass]="USERID === author ? 'message-right' : 'message-left'">
-        <p>
-            {{message}}<br>
-            {{pseudonym}}
-        </p>
+        [ngClass]="USERID === author ? 'message-right' : 'message-left'"
+        [matTooltip]="dateService.convertUTCDateToLocalDate(timeStamp)" 
+        [matTooltipPosition]="USERID === author ? 'left' : 'right'">
+        <span>
+            {{message}}
+        </span>
     </div>
+
 </div>

@@ -6,7 +6,8 @@
         <a 
         class="group-card" 
         *ngFor="let group of userGroups"
-        [routerLink]="['/chats', group.id]"
+        [routerLink]="'/chats'"
+        [state]="group"
         >
             {{group.name}}
         </a>

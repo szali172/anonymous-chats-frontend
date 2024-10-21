@@ -4,7 +4,7 @@ import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
 import { ChatUser } from '../../../models/chat-models/chat-user';
 import { ChatMessage } from '../../../models/chat-models/chat-message';
-import { UserGuess } from '../../../models/chat-models/user-guess';
+import { ChatGuess } from '../../../models/chat-models/user-guess';
 import { ChatWindowComponent } from '../chat-window/chat-window.component';
 import { CompleteChat } from '../../../models/chat-models/complete-chat';
 import { RouterModule } from '@angular/router';

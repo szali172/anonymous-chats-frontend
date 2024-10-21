@@ -1,35 +1,45 @@
 <mat-sidenav-container class="sidenav-container">
-    <!-- control the view based on screen size -->
+
   <mat-sidenav #drawer class="sidenav" fixedInViewport
       [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
       [mode]="(isHandset$ | async) ? 'over' : 'side'"
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
-        <mat-toolbar-row>Menu</mat-toolbar-row>
-        <!-- Breaks the group selection menu into a specific row for legibility -->
-        <mat-toolbar-row>
-            <mat-form-field style="justify-self: flex-end;" subscriptSizing="dynamic">
-                <mat-label >Selected Group</mat-label>
-                <mat-select  [(ngModel)]="selectedGroupId" name="group" >
-
-                  @for (group of userGroups; track group) {
-                    <!-- On click makes a new chain call to get all applicable user chats to populate the menu -->
-                    <mat-option [value]="group.id" (click)="getUserChats();">{{group.name}}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
+        <mat-toolbar-row id="group-name">{{selectedGroup.name}}</mat-toolbar-row>
+        
+        <mat-toolbar-row class="sidenav-row">
+          <a mat-fab class="sidenav-button" extended [routerLink]="'/groups'">
+            <mat-icon>home</mat-icon>
+            Groups
+          </a>
         </mat-toolbar-row>
+
+        <mat-toolbar-row class="sidenav-row">
+          <a mat-fab class="sidenav-button" extended (click)="openDialog()">
+            <mat-icon>people_outline</mat-icon>
+            All Members
+          </a>
+        </mat-toolbar-row>
+
     </mat-toolbar>
-    <!--Each nav item is a hyperlink currently and will need ot be converted over to passing info along to the chat window. Could be done by just changing the attribute of selected chatId i think?-->
+
+    <!--Each nav item is a hyperlink currently and will need ot be converted over to passing info along to the chat window. 
+    Could be done by just changing the attribute of selected chatId i think?-->
+    <h3 id="chats-header">Chats</h3>
+    <hr id="chats-line-break">
     <mat-nav-list>
-        <div *ngFor="let chat of completeChats, let i = index">
-            <a mat-list-item (click)="selectChatEvent(chat.chat.id)">Chat {{chat.chat.id}}: <span *ngFor="let user of chat.chatUsers">{{user.pseudonym}} </span> </a>
+        <div class="chat-card" *ngFor="let chat of completeChats" tabindex="-1">
+            <a class="noselect" (click)="selectChatEvent(chat.chat.id)">
+              <span>{{getChatPseudonymsAsString(chat)}}</span>
+            </a>
         </div>
     </mat-nav-list>
   </mat-sidenav>
+
   <!--Adds a button if the screensize gets so low that its related to mobile-->
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
+    <mat-toolbar class="chat-window-header">
+      
       @if (isHandset$ | async) {
         <button
           type="button"
@@ -39,8 +49,14 @@
           <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
         </button>
       }
-      <span>anonymous-chats-frontend</span>
+
+      <h3 class="chat-name" *ngIf="selectedCompleteChat; else no_chat_name">
+        {{getChatPseudonymsAsString()}}
+      </h3>
+      <ng-template class="chat-name" #no_chat_name></ng-template>
+
     </mat-toolbar>
+
     <!--selected group id will need to get changed to selected chat and used to pull chat info into the component-->
     @if (isChatSelected) {
       <app-chat-window [selectedCompleteChat]="selectedCompleteChat"></app-chat-window>

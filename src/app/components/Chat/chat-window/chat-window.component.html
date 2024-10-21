@@ -1,22 +1,48 @@
-<div class="container" >
-    <!-- open area for when a chat is selected. Need to figure out how to pass a selected group id up to the parent. Is doable but might not be the best idea. -->
-     <cdk-virtual-scroll-viewport class="message-window" itemSize="50" minBufferPx="200" maxBufferPx="400">
+<div class="container">
+    <cdk-virtual-scroll-viewport class="message-window" itemSize="10">
         <div *cdkVirtualFor="let message of openChatMessages">
             <app-message 
-                        [message]="message.filteredMessage"
-                        [author]="message.createdBy"
-                        [pseudonym]="pullMessagePseudonym(message)"
-                        [timeStamp]="message.createdOn">
+                [message]="message.filteredMessage"
+                [author]="message.createdBy"
+                [pseudonym]="pullMessagePseudonym(message)"
+                [repeatedAuthor]="isPreviousAuthor(message.createdBy)"
+                [timeStamp]="message.createdOn">
             </app-message>
         </div>
+        
+        <!-- Display chat closed section -->
+        @if (!isChatClosed) {
+            <app-end-of-chat-info 
+                [chatId]="selectedCompleteChat.chat.id"
+                [chatUsersMapping]="chatUsersMapping">
+            </app-end-of-chat-info>
+        }
     </cdk-virtual-scroll-viewport>
-    <div>
-        <mat-form-field style="width: 70vw;">
-            <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
-            <input class="chat-input-box" matInput cdkTextareaAutosize cdkAutosizeMinRows="0" cdkAutosizeMaxRows="20" [(ngModel)]="chatMessageInput">
-        </mat-form-field>
-        <button (click)="sendChatMessage()"> Send Message</button>
 
-    </div>
-
+    @if (isChatClosed) {
+        <div class="input-bar">
+            <mat-form-field class="input-field">
+                <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
+                <textarea 
+                    matInput
+                    [(ngModel)]="chatMessageInput"
+                    cdkTextareaAutosize
+                    cdkAutosizeMinRows="2"
+                    cdkAutosizeMaxRows="5"
+                    [maxlength]="500"
+                    (keydown.enter)="sendChatMessage()">
+                </textarea>
+            </mat-form-field>
+            <button
+                mat-raised-button
+                class="send-button"
+                type="submit"
+                [disabled]="chatMessageInput.length === 0"
+                [ngClass]="chatMessageInput.length === 0 ? 'inactive-button' : ''"
+                (click)="sendChatMessage()">
+                Send
+            </button>
+        </div>
+    }
+    
 </div>

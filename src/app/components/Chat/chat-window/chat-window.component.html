@@ -1,15 +1,15 @@
 <div class="container">
-    <cdk-virtual-scroll-viewport class="message-window" itemSize="10">
-        <div *cdkVirtualFor="let message of openChatMessages">
-            <app-message 
-                [message]="message.filteredMessage"
-                [author]="message.createdBy"
-                [pseudonym]="pullMessagePseudonym(message)"
-                [repeatedAuthor]="isPreviousAuthor(message.createdBy)"
-                [timeStamp]="message.createdOn">
-            </app-message>
-        </div>
-        
+        <div class="message-window" itemSize="10" id="message-window">
+            @for(message of openChatMessages; track message) {
+                <app-message 
+                    [message]="message.filteredMessage"
+                    [author]="message.createdBy"
+                    [pseudonym]="pullMessagePseudonym(message)"
+                    [repeatedAuthor]="isPreviousAuthor(message.createdBy)"
+                    [timeStamp]="message.createdOn">
+                </app-message>
+        }
+
         <!-- Display chat closed section -->
         @if (isChatClosed) {
             <app-end-of-chat-info 
@@ -17,7 +17,7 @@
                 [chatUsersMapping]="chatUsersMapping">
             </app-end-of-chat-info>
         }
-    </cdk-virtual-scroll-viewport>
+    </div>
 
     @if (!isChatClosed) {
         <div class="input-bar">
@@ -30,7 +30,7 @@
                     cdkAutosizeMinRows="2"
                     cdkAutosizeMaxRows="5"
                     [maxlength]="500"
-                    (keydown.enter)="sendChatMessage()">
+                    (keydown.enter)="sendChatMessage();">
                 </textarea>
             </mat-form-field>
             <button

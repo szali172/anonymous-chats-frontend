@@ -40,7 +40,7 @@
                 type="submit"
                 [disabled]="chatMessageInput.length === 0"
                 [ngClass]="chatMessageInput.length === 0 ? 'inactive-button' : ''"
-                (click)="sendChatMessage()">
+                (click)="filterChatMessage()">
                 Send
             </button>
         </div>

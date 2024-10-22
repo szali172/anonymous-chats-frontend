@@ -18,6 +18,8 @@ import { DateService } from '../../../services/date.service';
 import { MatDividerModule } from '@angular/material/divider';
 import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.component';
 import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
+import { FilteredChatMessage } from '../../../models/chat/filtered-chat-message';
+import { filter } from 'rxjs';
 
 
 @Component({
@@ -59,6 +61,7 @@ export class ChatWindowComponent implements OnInit {
   isLoaded : boolean = false;
 
   chatMessageInput = ''
+  filteredChatMessageInput = ''
   previousMessageAuthor = '';
 
 
@@ -101,16 +104,21 @@ export class ChatWindowComponent implements OnInit {
 
   //need to fix the service returning an obj with result: string instead of a direct string.
   filterChatMessage(): void {
+    let filterObject : FilteredChatMessage;
     this.textFilterService.filterChatmessage(this.chatMessageInput).subscribe({
       next:(data) => {
-        this.chatMessageInput = data
+        filterObject = data
+        this.filteredChatMessageInput = filterObject.result
+        this.sendChatMessage()
       },
       error: (error) => {
         console.error('Error sending filter message', error)
       },
       complete: () => {
         console.debug('Filter Message Complete')
+
       }
+
     })
   }
 
@@ -119,7 +127,7 @@ export class ChatWindowComponent implements OnInit {
     const createMessageDto: CreateMessageDto = {
       chatId: this.selectedCompleteChat.chat.id,
       originalMessage: this.chatMessageInput,
-      filteredMessage: this.chatMessageInput  // TODO: Needs to be filtered with API, becareful: if calling the filter method above, it's going to return an empty string because the subscribe method runs async. You'll need to do stuff with observers like in end-of-chat-info component
+      filteredMessage: this.filteredChatMessageInput
     }
     
     this.chatMessageInput = '';  // Clear chat input
@@ -176,18 +184,19 @@ export class ChatWindowComponent implements OnInit {
 
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      this.sendChatMessage();
+      this.filterChatMessage();
     }
   }
   
 
   scrollToBottom(): void {
-    const chat = document.getElementById("message-window")
-    if (chat)
-    {
-      chat.scrollTop = chat.scrollHeight
-    }
-
+    setTimeout(() => {
+      const chat = document.getElementById("message-window")
+      if (chat)
+      {
+        chat.scrollTop = chat.scrollHeight
+      }
+    },50)
   }
 }
 

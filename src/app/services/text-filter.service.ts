@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpBackend, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { FilteredChatMessage } from '../models/chat/filtered-chat-message';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class TextFilterService {
     this.http = new HttpClient(handler); 
   }
 
-  filterChatmessage(message : string) : Observable<string> {
-    return this.http.get<string>(this.url+message)
+  filterChatmessage(message : string) : Observable<FilteredChatMessage> {
+    return this.http.get<FilteredChatMessage>(this.url+message)
   }
 }

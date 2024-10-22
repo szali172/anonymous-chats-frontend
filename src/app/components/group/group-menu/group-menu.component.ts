@@ -8,6 +8,7 @@ import { MatButtonModule} from '@angular/material/button';
 import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
 import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
+import { environment } from '../../../../environments/environment';
 
 const USERID = "1";
 
@@ -53,5 +54,9 @@ export class GroupMenuComponent {
     })
     createGroup.afterClosed().subscribe(result => {
     });
+  }
+
+  logout() {
+    this.auth.logout()
   }
 }

@@ -1,4 +1,4 @@
-import { Component, inject, Input, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChatWindowComponent } from "../chat-window/chat-window.component";
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { ChatMessage } from '../../../models/chat/chat-message';
@@ -12,14 +12,16 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule, MatMenuItem } from '@angular/material/menu';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { map, Observable, shareReplay, interval, Subscription } from 'rxjs';
+import { map, Observable, shareReplay, interval, Subscription, forkJoin } from 'rxjs';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms'
 import { Group } from '../../../models/group/group';
 import { GroupService } from '../../../services/group.service';
@@ -28,6 +30,7 @@ import { MembersListComponent } from '../members-list/members-list.component';
 import { UserSelectComponent } from '../user-select/user-select.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DateService } from '../../../services/date.service';
+import { AuthService } from '@auth0/auth0-angular';
 
 
 @Component({
@@ -45,6 +48,7 @@ import { DateService } from '../../../services/date.service';
     MatIconModule,
     MatMenuModule, MatMenuItem,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     ScrollingModule,
     AsyncPipe,
     ChatWindowComponent,
@@ -59,47 +63,52 @@ import { DateService } from '../../../services/date.service';
 })
 
 
-export class ChatPageContainerComponent {
+export class ChatPageContainerComponent implements OnInit, OnDestroy {
   @ViewChild(ChatWindowComponent) chatWindowComponent!: ChatWindowComponent;
 
   private breakpointObserver = inject(BreakpointObserver);
   private groupService = inject(GroupService);
   private chatService = inject(ChatService);
   private dateService = inject(DateService);
-  readonly dialog = inject(MatDialog)
+  private auth = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
+  readonly dialog = inject(MatDialog);
+  private timerSubscription!: Subscription;
 
-  //Check for if a chat is selected
-  isChatSelected : boolean = false
-  selectedCompleteChat! : CompleteChat;
+
   @Input({required : true}) selectedGroup : Group = history.state;
+  isGroupAdmin: boolean = false;
   
   //need to replace user with auth info
   loggedInUser : string = "1"
 
   //declare all of the various things needed for functionality. 
   //Look to refactor later potentially and avoid needing to use this many
-  chatMessages : ChatMessage[] = []
-  userGuesses : ChatGuess[] = []
-  userGroups : Group[] = []
-  allChatUsers : Array<ChatUser[]> = []
+  // chatMessages : ChatMessage[] = []
+  // userGuesses : ChatGuess[] = []
+  // userGroups : Group[] = []
+  // allChatUsers : Array<ChatUser[]> = []
 
-  chats : Chat[] = []
+  // chats : Chat[] = []
+  isChatSelected : boolean = false
   completeChats: CompleteChat[] = []
-  isLoaded: boolean = false
+  selectedCompleteChat : CompleteChat | undefined;
+  chatCreationLoading: boolean = false;
+  // isLoaded: boolean = false
   
   remainingTime: string = ''; // Timer display value
-  private timerSubscription!: Subscription; // To unsubscribe from the timer
+  
   
   //on load grab all available chat objects with associated users
-  //should look to pass the list of groups down from the group-menu to avoid an extra call
   ngOnInit(): void {
-    this.getUserChats()
-    this.getUserGroups()
+    this.getUserChats();
+    // this.getUserGroups();
+    this.checkIfGroupAdmin();
 
     // Start the SignalR connection and join each of the chats
     this.chatService.startConnection().then(() => {
-      this.chats.forEach(chat => {
-        this.chatService.joinChatGroup(chat.id);
+      this.completeChats.forEach(completeChat => {
+        this.chatService.joinChatGroup(completeChat.chat.id);
       });
     });
 
@@ -119,77 +128,115 @@ export class ChatPageContainerComponent {
   
 
   //shamelessly stolen from groupmenu component
-  getUserGroups() {
-    this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
-      this.userGroups = groups
-    })
-  }
+  // getUserGroups() {
+  //   this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
+  //     this.userGroups = groups
+  //   })
+  // }
   
 
-  //on successful pull of user chat list, starts pulling user chats
+  
   getUserChats() {
-    this.chatService.getUserChats(this.loggedInUser,this.selectedGroup!.id).subscribe({
-      next:(data) => {
-        this.chats = data;
+    this.chatService.getUserChats(this.loggedInUser, this.selectedGroup.id).subscribe({
+      next:(chats) => {
+        this.buildCompleteChats(chats);
       },
       error: (error) => {
         console.error('Error pulling all chats', error)
       },
       complete: () => {
         console.debug('Chat pull complete.')
-        this.getChatUsers()
       }
     })
   }
 
 
-  //on success of pulling all chat users, starts the process to consolidate into a single user chat object
-  getChatUsers() {
-    for(var i of this.chats)
-    {
-    //Add Users to the chat object
-      this.chatService.getChatUsers(i.id).subscribe({
-        next:(data) => {
-          this.allChatUsers.push(data);
-        },
-        error: (error) => {
-          console.error('Error pulling all Chat Users', error)
-        },
-        complete: () => {
-          console.debug('Chat User pull complete.')
-          this.buildUserChats()
-        }
-      })
-    }
+  createChats(): void {
+    this.chatCreationLoading = true;  // update loading status
+    this.chatService.createChats(this.selectedGroup.id).subscribe({
+      next: (chats) => {
+        // filter list to find chat the current user is in
+        // reload page to display new chat
+      },
+      error: (error) => {
+        console.error(`Failed to create groups for ${this.selectedGroup.id}: `, error);
+      },
+      complete: () => {
+        console.debug("Chat creation complete");
+        this.chatCreationLoading = false;
+        this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
+        this.getUserChats();  // refetch list of chats
+      }
+    })
+  }
+
+
+  /* ========== Helper Methods ========== */
+
+  // on success of pulling all chat users, starts the 
+  // process to consolidate into a single user chat object
+  buildCompleteChats(chats: Chat[]): void {
+    this.completeChats = [];  // Clear previous chats
+
+    const chatObservables = chats.map(chatObj => 
+      this.chatService.getChatUsers(chatObj.id).pipe(
+        map(chatUsers => ({
+          chat: chatObj,
+          chatUsers: chatUsers
+        }))
+      )
+    );
+  
+    forkJoin(chatObservables).subscribe(completeChats => {
+      this.completeChats = this.dateService.sortCompleteChatsByDate(completeChats);
+    });
   }
 
 
   getChatPseudonymsAsString(chat?: CompleteChat | null) : string {
     if (chat) {
       return chat.chatUsers.map(x => x.pseudonym).join(', ');
+    } else if (this.selectedCompleteChat) {
+      return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym).join(', ');
+    } else {
+      console.error('Failed to get chat pseudonyms as a string');
+      return '';
     }
-    return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym).join(', ');
+    
   }
 
 
   getChatPseudonymsAsArray(chat?: CompleteChat | null) : string[] {
     if (chat) {
       return chat.chatUsers.map(x => x.pseudonym);
+    } else if (this.selectedCompleteChat) {
+      return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym);
+    } else {
+      console.error('Failed to get chat pseudonyms as an array');
+      return [];
     }
-    return this.selectedCompleteChat.chatUsers.map(x => x.pseudonym);
   }
 
 
   //this should be refactored to use filters as the data isn't super reliable
-  buildUserChats() { 
-    for(let i = 0; i < this.chats.length; i++) {
+  // buildUserChats() { 
+  //   for(let i = 0; i < this.chats.length; i++) {
 
-      this.completeChats.push({
-        chat: this.chats[i],
-        chatUsers: this.allChatUsers[i]
-      })
-    }
-    this.isLoaded = true;
+  //     this.completeChats.push({
+  //       chat: this.chats[i],
+  //       chatUsers: this.allChatUsers[i]
+  //     })
+  //   }
+  //   this.isLoaded = true;
+  // }
+
+
+  checkIfGroupAdmin(): void {
+    this.auth.user$.subscribe((user) => {
+      if (user?.sub === this.selectedGroup.createdBy) {
+        this.isGroupAdmin = true;
+      }
+    })
   }
 
   
@@ -208,22 +255,23 @@ export class ChatPageContainerComponent {
 
   //used to map the selected CompleteChat obect and pass it down to the chat window
   selectChatEvent(inputChatId : number) {
+    // If current chat matches clicked chat, do nothing
     if (this.selectedCompleteChat && inputChatId === this.selectedCompleteChat.chat.id) {
       return;
     }
 
-    this.isChatSelected = !this.isChatSelected
-    if (this.isChatSelected)
-    {
-      // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
-      this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId)!;
+    this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId);
+    // if (!this.isChatSelected)
+    // {
+    //   // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
       
-      if(this.selectedCompleteChat === undefined) {
-        console.error("Error retreiving complete chat object.");
-      }
+      
+    //   if(this.selectedCompleteChat === undefined) {
+    //     console.error("Error retreiving complete chat object.");
+    //   }
 
-      this.startTimer();
-    }
+    this.startTimer();
+    // }
   }
 
 
@@ -237,32 +285,28 @@ export class ChatPageContainerComponent {
 
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedCompleteChat.chat.id},
+      data: {thisId : this.selectedCompleteChat!.chat.id},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',
       maxHeight: '90vh'
     })
-    openGuess.afterClosed().subscribe(result => {
-      if (result !== undefined) {
-        console.log(result)
-        //do something with guess information here
-      }
-    });
+    openGuess.afterClosed().subscribe();
   }
 
 
   isChatClosed() : boolean {
-    return this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+    return this.dateService.isChatClosed(this.selectedCompleteChat?.chat);
   }
 
  
   getRemainingTime(): string {
-    return this.dateService.getRemainingTime(this.selectedCompleteChat.chat);
+    return this.dateService.getRemainingTime(this.selectedCompleteChat?.chat);
   }
 
+
   isTimeBelowTenMinutes(): boolean {
-    return this.dateService.isTimeBelowTenMinutes(this.selectedCompleteChat.chat);
+    return this.dateService.isTimeBelowTenMinutes(this.selectedCompleteChat?.chat);
   }
 
 
@@ -285,3 +329,27 @@ export class ChatPageContainerComponent {
     );
 }
 
+
+
+@Component({
+  selector: 'snack-bar-message',
+  templateUrl: 'snack-bar-message.html',
+  styles: `
+    :host {
+      display: flex;
+    }
+
+    #message {
+      color: white;
+    }
+
+    #button {
+      color: hotpink;
+    }
+  `,
+  standalone: true,
+  imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
+})
+export class SnackBarMessageComponent {
+  snackBarRef = inject(MatSnackBarRef);
+}

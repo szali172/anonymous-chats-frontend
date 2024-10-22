@@ -6,7 +6,6 @@
       [opened]="(isHandset$ | async) === false">
     <mat-toolbar>
         <mat-toolbar-row id="group-name">{{selectedGroup.name}}</mat-toolbar-row>
-        
         <mat-toolbar-row class="sidenav-row">
           <a mat-fab class="sidenav-button" extended [routerLink]="'/groups'">
             <mat-icon>home</mat-icon>
@@ -21,25 +20,43 @@
           </a>
         </mat-toolbar-row>
 
+        <mat-toolbar-row
+          class="sidenav-row"
+          *ngIf="isGroupAdmin"
+          [matTooltip]="'Create randomized chats for your group members!'"
+          [matTooltipPosition]="'right'"
+          [matTooltipShowDelay]="300">
+          <a mat-fab class="sidenav-button" extended (click)="createChats()">
+            <mat-icon>chat</mat-icon>
+            Start New Round
+          </a>
+        </mat-toolbar-row>
+
+        <mat-toolbar-row class="sidenav-row" *ngIf="chatCreationLoading">
+          <mat-spinner [diameter]="30"></mat-spinner>
+        </mat-toolbar-row>
     </mat-toolbar>
 
-    <!--Each nav item is a hyperlink currently and will need ot be converted over to passing info along to the chat window. 
-    Could be done by just changing the attribute of selected chatId i think?-->
     <h3 id="chats-header">Chats</h3>
     <hr id="chats-line-break">
-    <mat-nav-list>
-        <div class="chat-card" *ngFor="let chat of completeChats" tabindex="-1">
-            <a class="noselect" (click)="selectChatEvent(chat.chat.id)">
+    <mat-nav-list class="chat-card-list">
+        <div
+          class="chat-card"
+          *ngFor="let chat of completeChats"
+          [ngClass]="chat.chat.id === selectedCompleteChat?.chat?.id ? 'selected-chat' : ''"
+          tabindex="-1"
+          (click)="selectChatEvent(chat.chat.id)">
+            <a class="noselect">
               <span>{{getChatPseudonymsAsString(chat)}}</span>
             </a>
         </div>
     </mat-nav-list>
   </mat-sidenav>
 
-  <!--Adds a button if the screensize gets so low that its related to mobile-->
   <mat-sidenav-content>
-    <mat-toolbar class="chat-header-container">
+    <mat-toolbar class="chat-window-header-container">
       
+      <!--Adds a button if the screensize gets so low that its related to mobile-->
       @if (isHandset$ | async) {
         <button
           type="button"
@@ -50,13 +67,12 @@
         </button>
       }
 
-      <div class="chat-header" *ngIf="selectedCompleteChat; else no_chat_name">
-
+      <div class="chat-window-header" *ngIf="selectedCompleteChat; else no_chat_name">
         <h3 id="chat-name">
           {{getChatPseudonymsAsString()}}
         </h3>
 
-        <div id="chat-header-right">
+        <div id="chat-window-header-right">
           <div id="chat-timer">
             <span [ngClass]="{ 'red-text': isTimeBelowTenMinutes() }">Time Left: {{ getRemainingTime() }}</span>
           </div>
@@ -96,11 +112,9 @@
 
       </div>
       <ng-template class="chat-name" #no_chat_name></ng-template>
-
     </mat-toolbar>
 
-    <!--selected group id will need to get changed to selected chat and used to pull chat info into the component-->
-    @if (isChatSelected) {
+    @if (selectedCompleteChat) {
       <app-chat-window [selectedCompleteChat]="selectedCompleteChat"></app-chat-window>
     }
 

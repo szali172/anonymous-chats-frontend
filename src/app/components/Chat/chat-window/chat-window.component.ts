@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, SimpleChange, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
 import { ChatMessage } from '../../../models/chat/chat-message';
@@ -51,35 +51,37 @@ export class ChatWindowComponent implements OnInit {
   openChatMessages: ChatMessage[] = [];
   openChatUsers: ChatUser[] = []
   chatUsersMapping: any = [];
-  isChatClosed: boolean = false;
+  isChatClosed: boolean = true;
   loggedInUser = "1" // TODO: Remove later plzzzz
 
   chatMessageInput = ''
   previousMessageAuthor = '';
 
-  //testing chat update parts
-
-
 
   ngOnInit(): void {
-    this.openChatUsers = this.selectedCompleteChat.chatUsers
-    this.loadChatMessages(this.selectedCompleteChat.chat.id);
-    this.mapUsers();
-    this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+    this.intializeWindow();
   }
 
-  ngOnChanges (changes : SimpleChange) {
-    console.log("These are the Changes:")
-    console.log(changes)
-    
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCompleteChat']) {
+      this.intializeWindow();
+    }
+  }
+
+
+  intializeWindow(): void {
+    this.openChatUsers = this.selectedCompleteChat.chatUsers
+    this.mapUsers();
+    this.loadChatMessages(this.selectedCompleteChat.chat.id);
+    this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
   }
 
   
   loadChatMessages(openChatId : number): void {
     this.chatService.getChatMessages(openChatId).subscribe({
-      next:(data) => {
-        this.openChatMessages = data;
-        this.openChatMessages.sort((a,b) => new Date(a.createdOn).getTime() - new Date(b.createdOn).getTime())
+      next:(messages) => {
+        this.openChatMessages = this.dateService.sortMessagesByDate(messages);
       },
       error: (error) => {
         console.error('Error pulling Chat Messages', error)
@@ -115,7 +117,9 @@ export class ChatWindowComponent implements OnInit {
       originalMessage: this.chatMessageInput,
       filteredMessage: this.chatMessageInput  // TODO: Needs to be filtered with API, becareful: if calling the filter method above, it's going to return an empty string because the subscribe method runs async. You'll need to do stuff with observers like in end-of-chat-info component
     }
-    this.chatMessageInput = ' ';
+    
+    this.chatMessageInput = '';  // Clear chat input
+
     this.chatService.createChatMessage(createMessageDto).subscribe({
       error: (error) => {
         console.error('Error pulling all chats', error)
@@ -126,15 +130,16 @@ export class ChatWindowComponent implements OnInit {
     })    
   }
 
+
   //this takes in a message sent from the signalR to Parent component
   handleChatMessage(message : ChatMessage) {
-
     this.openChatMessages.push(message)
     this.scrollToBottom()
   }
 
 
   mapUsers() {
+    this.chatUsersMapping = []; // Clear previous mappings
     this.openChatUsers.forEach(x => this.chatUsersMapping.push({
       key: x.userId,
       value: x.pseudonym
@@ -157,6 +162,18 @@ export class ChatWindowComponent implements OnInit {
     const tempPrevAuthor = this.previousMessageAuthor;
     this.previousMessageAuthor = author;
     return author === tempPrevAuthor;
+  }
+
+
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.ctrlKey && event.key === 'Enter' ||
+        event.shiftKey && event.key === 'Enter')  {
+      this.chatMessageInput += '\n';
+
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      this.sendChatMessage();
+    }
   }
   
 

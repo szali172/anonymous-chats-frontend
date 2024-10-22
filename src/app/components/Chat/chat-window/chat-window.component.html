@@ -30,7 +30,7 @@
                     cdkAutosizeMinRows="2"
                     cdkAutosizeMaxRows="5"
                     [maxlength]="500"
-                    (keydown.enter)="sendChatMessage();">
+                    (keydown)="handleKeyboardEvent($event)">
                 </textarea>
             </mat-form-field>
             <button

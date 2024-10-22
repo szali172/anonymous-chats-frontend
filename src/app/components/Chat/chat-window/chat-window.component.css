@@ -60,8 +60,8 @@ html, body {
     width: 80px;
     border: 1px solid #babdc0;
     border-radius: 5px;
-    background-color: #182e44;
-    color: #e4e5e5;
+    background-color: var(--button-color);
+    color: var(--button-text-color);
     pointer-events: auto;
     cursor: pointer;
     margin-right: 20px;

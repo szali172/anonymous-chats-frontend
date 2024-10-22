@@ -9,6 +9,7 @@
     margin: 0 25px 25px 0;
     display: inline-block;
     vertical-align: top;
+    
   }
 
   .guess-container {
@@ -42,6 +43,7 @@
     cursor: move;
     background: rgb(177, 177, 177);
     font-size: 14px;
+    
   }
   
   .cdk-drag-preview {

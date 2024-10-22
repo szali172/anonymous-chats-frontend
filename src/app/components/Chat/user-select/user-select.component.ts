@@ -17,7 +17,7 @@ import { ChatService } from '../../../services/chat.service';
 import { ChatGuess } from '../../../models/chat/chat-guess';
 import { ChatUser } from '../../../models/chat/chat-user';
 import { ChatGuessDTO } from '../../../models/chat/chat-guess-dto';
-import { MAT_DIALOG_DATA, MatDialogClose } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogClose, MatDialogModule } from '@angular/material/dialog';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -38,7 +38,8 @@ import { UserService } from '../../../services/user.service';
     MatTableModule,
     DragDropModule,
     CommonModule,
-    MatDialogClose
+    MatDialogClose,
+    MatDialogModule
   ],
   templateUrl: './user-select.component.html',
   styleUrl: './user-select.component.css',

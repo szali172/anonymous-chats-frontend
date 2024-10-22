@@ -1,26 +1,47 @@
-<div cdkDropListGroup>
+<mat-dialog-content>
+  <div cdkDropListGroup>
+    <div class="container">
+      <h2>Available Users</h2>
 
-<div class="container">
-    <h2>Available Users</h2>
-  
-    <div id="allUsersContainer" cdkDropList [cdkDropListData]="allUsers" cdkDropList class="list"
-      (cdkDropListDropped)="drop($event)" [cdkDropListEnterPredicate]="noReturnPredicate">
-      <div class="user-box" *ngFor="let user of allUsers" [cdkDragData]="user" cdkDrag>{{user.userName}}</div>
-    </div>
-</div>
- <!-- addin an ngif to prevent problems with displaying before calls were made -->
-<div *ngIf="guesseePseudonyms.length > 0" class="guess-container">
-@for (selectedUser of selectedUsers; track selectedUser;) {
-
-      <h2>Select a guess for {{getMappingPseudonym($index)}}</h2>
-      <button (click)="clearSelection($index)">Clear Guess</button>
-      <div id={{$index}} cdkDropList [cdkDropListSortingDisabled]="true" [cdkDropListData]="selectedUsers" cdkDropList class="list" (cdkDropListDropped)="drop($event)">
-          <div class="user-box" cdkDrag [cdkDragData]="selectedUser">{{selectedUser.userName}}</div>
+      <div
+        id="allUsersContainer"
+        cdkDropList
+        [cdkDropListData]="allUsers"
+        cdkDropList
+        class="list"
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListEnterPredicate]="noReturnPredicate"
+      >
+        <div
+          class="user-box"
+          *ngFor="let user of allUsers"
+          [cdkDragData]="user"
+          cdkDrag
+        >
+          {{ user.userName }}
+        </div>
       </div>
-
-  }
-</div>
-</div>
-
-
+    </div>
+    <!-- addin an ngif to prevent problems with displaying before calls were made -->
+    <div *ngIf="guesseePseudonyms.length > 0" class="guess-container">
+      @for (selectedUser of selectedUsers; track selectedUser;) {
+      <h2>Select a guess for {{ getMappingPseudonym($index) }}</h2>
+      <button (click)="clearSelection($index)">Clear Guess</button>
+      <div
+        id="{{ $index }}"
+        cdkDropList
+        [cdkDropListSortingDisabled]="true"
+        [cdkDropListData]="selectedUsers"
+        cdkDropList
+        class="list"
+        (cdkDropListDropped)="drop($event)"
+      >
+        <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
+          {{ selectedUser.userName }}
+        </div>
+      </div>
+      }
+    </div>
+  </div>
   <button (click)="onSubmit()" mat-dialog-close>Save Guess</button>
+</mat-dialog-content>

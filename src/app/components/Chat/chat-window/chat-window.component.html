@@ -1,3 +1,4 @@
+@if(isLoaded) {
 <div class="container">
         <div class="message-window" itemSize="10" id="message-window">
             @for(message of openChatMessages; track message) {
@@ -46,3 +47,7 @@
     }
     
 </div>
+}
+@else {
+    <app-loading-spinner></app-loading-spinner>
+}

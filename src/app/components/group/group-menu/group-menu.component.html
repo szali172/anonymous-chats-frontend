@@ -1,3 +1,4 @@
+@if(isLoaded){
 <div class="container">
 
     <h1 id="title" class="noselect">Your Groups</h1>
@@ -15,3 +16,7 @@
         </a>
     </div>
 </div>
+}
+@else {
+    <app-loading-spinner></app-loading-spinner>
+}

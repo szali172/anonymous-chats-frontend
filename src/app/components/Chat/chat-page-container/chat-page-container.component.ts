@@ -31,6 +31,7 @@ import { UserSelectComponent } from '../user-select/user-select.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DateService } from '../../../services/date.service';
 import { AuthService } from '@auth0/auth0-angular';
+import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 
 
 @Component({
@@ -56,7 +57,8 @@ import { AuthService } from '@auth0/auth0-angular';
     MatSelectModule, //group selector field
     MatFormFieldModule, //group selector field
     RouterModule,
-    FormsModule //group selector field
+    FormsModule, //group selector field
+    LoadingSpinnerComponent,
   ],
   templateUrl: './chat-page-container.component.html',
   styleUrl: './chat-page-container.component.css'
@@ -74,6 +76,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   private timerSubscription!: Subscription;
+  public isLoaded : boolean = false
 
 
   @Input({required : true}) selectedGroup : Group = history.state;
@@ -190,6 +193,8 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     forkJoin(chatObservables).subscribe(completeChats => {
       this.completeChats = this.dateService.sortCompleteChatsByDate(completeChats);
     });
+
+    this.isLoaded = true
   }
 
 

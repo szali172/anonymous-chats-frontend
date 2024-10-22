@@ -104,7 +104,16 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   
   //on load grab all available chat objects with associated users
   ngOnInit(): void {
-    this.getUserChats();
+    //starting with this to grab userID. should probably refactor to get this from the group page?
+    this.auth.user$.subscribe({
+      next: (user) =>{
+        if(user?.sub)
+          this.loggedInUser = user?.sub
+        this.getUserChats();
+      },
+    })
+
+
     // this.getUserGroups();
     this.checkIfGroupAdmin();
 
@@ -119,6 +128,8 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
       this.handleIncomingMessage(message);
     });
+
+
   }
 
 
@@ -180,7 +191,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   // process to consolidate into a single user chat object
   buildCompleteChats(chats: Chat[]): void {
     this.completeChats = [];  // Clear previous chats
-
     const chatObservables = chats.map(chatObj => 
       this.chatService.getChatUsers(chatObj.id).pipe(
         map(chatUsers => ({
@@ -189,11 +199,9 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
         }))
       )
     );
-  
     forkJoin(chatObservables).subscribe(completeChats => {
       this.completeChats = this.dateService.sortCompleteChatsByDate(completeChats);
     });
-
     this.isLoaded = true
   }
 

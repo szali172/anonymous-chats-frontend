@@ -112,7 +112,7 @@ export class GroupCreatePageComponent {
 
   onSubmit() {
     this.selectedUsers.forEach(x => {this.selectedUserIds.push(x.id.toString())})
-
+    //this.selectedUserIds.push(this.logge)
     if (this.newGroupForm.valid && this.selectedUserIds.length > 9)
     {
       this.newGroup.name = this.newGroupForm.controls['name'].value

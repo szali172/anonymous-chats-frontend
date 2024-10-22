@@ -116,7 +116,7 @@
     </mat-toolbar>
 
     @if (selectedCompleteChat) {
-      <app-chat-window [selectedCompleteChat]="selectedCompleteChat"></app-chat-window>
+      <app-chat-window [selectedCompleteChat]="selectedCompleteChat" [loggedInUser]="loggedInUser"></app-chat-window>
     }
 
   </mat-sidenav-content>

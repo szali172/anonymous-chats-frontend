@@ -49,12 +49,13 @@ export class ChatWindowComponent implements OnInit {
   dateService = inject(DateService);
 
   @Input({required : true}) selectedCompleteChat! : CompleteChat;
+  @Input({required : true}) loggedInUser! : string
 
   openChatMessages: ChatMessage[] = [];
   openChatUsers: ChatUser[] = []
   chatUsersMapping: any = [];
   isChatClosed: boolean = true;
-  loggedInUser = "1" // TODO: Remove later plzzzz
+  //loggedInUser = "1" // TODO: Remove later plzzzz
   isLoaded : boolean = false;
 
   chatMessageInput = ''

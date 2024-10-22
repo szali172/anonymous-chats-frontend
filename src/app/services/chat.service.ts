@@ -50,9 +50,6 @@ export class ChatService {
     return this.messagesSubject.asObservable();
   }
 
-  
-
-
 
   // Backend endpoints
   getUserChats(userId : string, groupId : number): Observable<Chat[]>{
@@ -74,6 +71,10 @@ export class ChatService {
   updateUserGuess(userGuessDto : ChatGuessDTO): Observable<void> {
     return this.httpClient.put<void>(`${environment.apiUrl}/${this.location}/Guesses`, userGuessDto)
   }
+
+  createChats(groupId: number): Observable<Chat[]> {
+    return this.httpClient.post<Chat[]>(`${environment.apiUrl}/${this.location}/Chats/groupId=${groupId}`, null)
+  } 
 
   // Message will be written to the database and broadcasted to all other chatGroup members
   createChatMessage(messageDto : CreateMessageDto): Observable<ChatMessage> {

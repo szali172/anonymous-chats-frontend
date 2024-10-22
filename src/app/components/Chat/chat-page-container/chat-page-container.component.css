@@ -6,12 +6,24 @@
   
 .sidenav {
   background-color: var(--secondary-color);
-  min-width: 200px;
-  width: 20vw;
+  min-width: 220px;
+  width: 23vw;
+  overflow-x: hidden;
 }
 
 .sidenav .mat-toolbar {
   background: var(--secondary-color);
+}
+
+.sidenav-row {
+  display: flex;
+  justify-content: center;
+}
+
+.sidenav-button {
+  width: 100%;
+  max-width: 200px;
+  height: 75%;
 }
 
 mat-toolbar .mat-primary {
@@ -30,7 +42,7 @@ mat-toolbar .mat-primary {
 }
 
 #chats-line-break {
-  margin: 0 40px 0 15px;
+  margin: 0 10px 0 10px;
   border-radius: 5px;
 }
 
@@ -42,40 +54,39 @@ mat-toolbar .mat-primary {
   font-weight: 600;
 }
 
-.sidenav-row {
+.chat-card-list {
   display: flex;
+  flex-flow: column;
   justify-content: center;
-}
-
-.sidenav-button {
-  width: 100%;
-  max-width: 200px;
-  height: 75%;
+  align-items: center;
 }
 
 .chat-card {
-  border-radius: 0;
-  width: 100%;
+  width: 80%;
   background-color: var(--primary-color);
   color: var(--primary-text-color);
   padding: 10px;
+  margin-bottom: 3px;
   transition: ease all 0.3s;
 }
 
 .chat-card:hover {
-  translate: 10px 0;
-  transform: scale(110%);
+  transform: scale(107%);
   pointer-events: auto;
   cursor: pointer;
   transition: ease all 0.3s;
 }
 
-.chat-header-container {
+.selected-chat {
+  background-color: rgba(75, 75, 75, 0.6);
+}
+
+.chat-window-header-container {
   background-color: var(--ternary-color);
   width: 100%;
 }
 
-.chat-header {
+.chat-window-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -84,11 +95,16 @@ mat-toolbar .mat-primary {
 }
 
 #chat-name {
+  display: block;
   color: var(--primary-text-color);
   flex-grow: 1;
+  max-width: 70%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-#chat-header-right {
+#chat-window-header-right {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
@@ -172,13 +188,13 @@ mat-toolbar .mat-primary {
 }
 
 #make-guess-button {
-  background-color: rgb(75, 75, 75);
-  color: white;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   transition: ease all 0.2s;
 }
 
 #make-guess-button:hover {
-  background-color: rgb(126, 126, 126);
-  color: rgb(50, 50, 50);
+  background-color: rgb(64, 80, 159);
+  color: rgb(219, 219, 219);
   transition: ease all 0.2s;
 }

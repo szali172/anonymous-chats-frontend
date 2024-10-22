@@ -1,0 +1,23 @@
+mat-spinner {
+    display: flex;
+    height: 20vh;
+    width: 20vw;
+    margin: auto;
+}
+
+
+.loginCard {
+    display: flex;
+    padding: 20px;
+    justify-content: center;
+    align-content: center;
+    margin: auto;
+  }
+  
+div {
+background-color: var(--primary-color);
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  margin:auto;
+  }

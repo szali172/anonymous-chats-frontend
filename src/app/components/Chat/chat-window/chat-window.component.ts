@@ -17,6 +17,7 @@ import { TextFilterService } from '../../../services/text-filter.service';
 import { DateService } from '../../../services/date.service';
 import { MatDividerModule } from '@angular/material/divider';
 import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.component';
+import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 
 
 @Component({
@@ -35,6 +36,7 @@ import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.com
     MatFormFieldModule,
     MatIconModule,
     MatDividerModule,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.css'
@@ -53,6 +55,7 @@ export class ChatWindowComponent implements OnInit {
   chatUsersMapping: any = [];
   isChatClosed: boolean = true;
   loggedInUser = "1" // TODO: Remove later plzzzz
+  isLoaded : boolean = false;
 
   chatMessageInput = ''
   previousMessageAuthor = '';
@@ -89,7 +92,7 @@ export class ChatWindowComponent implements OnInit {
       complete: () => {
         console.debug('Chat Message pull complete.');
         this.scrollToBottom();
-
+        this.isLoaded = true;
       }
     })
   }

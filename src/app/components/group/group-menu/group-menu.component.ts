@@ -7,13 +7,14 @@ import { AuthService } from '@auth0/auth0-angular';
 import { MatButtonModule} from '@angular/material/button';
 import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
+import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 
 const USERID = "1";
 
 @Component({
   selector: 'app-group-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, LoadingSpinnerComponent],
   templateUrl: './group-menu.component.html',
   styleUrl: './group-menu.component.css'
 })
@@ -21,6 +22,7 @@ export class GroupMenuComponent {
   auth = inject(AuthService);
   groupService = inject(GroupService);
   userGroups: Group[] = [];
+  isLoaded : boolean = false;
   readonly dialog = inject(MatDialog)
 
 
@@ -35,6 +37,7 @@ export class GroupMenuComponent {
     this.groupService.getUserGroups(USERID).subscribe(groups => {
       this.userGroups = groups
       console.log(groups);
+      this.isLoaded = true;
     });
   }
 

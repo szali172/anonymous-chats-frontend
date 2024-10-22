@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Input, OnInit, SimpleChange, ViewChild } from '@angular/core';
 import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
 import { ChatMessage } from '../../../models/chat/chat-message';
@@ -12,11 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule } from '@angular/forms';
 import { TextFilterService } from '../../../services/text-filter.service';
 import { DateService } from '../../../services/date.service';
 import { MatDividerModule } from '@angular/material/divider';
 import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.component';
+
 
 @Component({
   selector: 'app-chat-window',
@@ -33,7 +34,7 @@ import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.com
     MatSelectModule,
     MatFormFieldModule,
     MatIconModule,
-    MatDividerModule
+    MatDividerModule,
   ],
   templateUrl: './chat-window.component.html',
   styleUrl: './chat-window.component.css'
@@ -56,11 +57,21 @@ export class ChatWindowComponent implements OnInit {
   chatMessageInput = ''
   previousMessageAuthor = '';
 
+  //testing chat update parts
+
+
+
   ngOnInit(): void {
     this.openChatUsers = this.selectedCompleteChat.chatUsers
     this.loadChatMessages(this.selectedCompleteChat.chat.id);
     this.mapUsers();
     this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+  }
+
+  ngOnChanges (changes : SimpleChange) {
+    console.log("These are the Changes:")
+    console.log(changes)
+    
   }
 
   
@@ -76,6 +87,7 @@ export class ChatWindowComponent implements OnInit {
       complete: () => {
         console.debug('Chat Message pull complete.');
         this.scrollToBottom();
+
       }
     })
   }
@@ -103,9 +115,7 @@ export class ChatWindowComponent implements OnInit {
       originalMessage: this.chatMessageInput,
       filteredMessage: this.chatMessageInput  // TODO: Needs to be filtered with API, becareful: if calling the filter method above, it's going to return an empty string because the subscribe method runs async. You'll need to do stuff with observers like in end-of-chat-info component
     }
-
-    this.chatMessageInput = '';
-
+    this.chatMessageInput = ' ';
     this.chatService.createChatMessage(createMessageDto).subscribe({
       error: (error) => {
         console.error('Error pulling all chats', error)
@@ -114,6 +124,13 @@ export class ChatWindowComponent implements OnInit {
         console.debug('Chat send complete.')
       }
     })    
+  }
+
+  //this takes in a message sent from the signalR to Parent component
+  handleChatMessage(message : ChatMessage) {
+
+    this.openChatMessages.push(message)
+    this.scrollToBottom()
   }
 
 
@@ -144,12 +161,12 @@ export class ChatWindowComponent implements OnInit {
   
 
   scrollToBottom(): void {
-    if (this.scrollViewport) {
-      setTimeout(() => {
-        const totalHeight = this.scrollViewport.measureScrollOffset('bottom');
-        this.scrollViewport.scrollToOffset(totalHeight, 'smooth');
-      }, 0); 
+    const chat = document.getElementById("message-window")
+    if (chat)
+    {
+      chat.scrollTop = chat.scrollHeight
     }
+
   }
 }
 

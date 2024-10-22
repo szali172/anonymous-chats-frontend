@@ -192,16 +192,16 @@ export class ChatPageContainerComponent {
     this.isLoaded = true;
   }
 
-
+  
   // Handle new incoming messages
   handleIncomingMessage(message: ChatMessage) {
     // If the message is for the currently selected chat, add it to the open chat messages
     if (message.chatId === this.selectedCompleteChat?.chat?.id) {
-      console.log("MESSAGE: ", message);
-      this.chatWindowComponent.openChatMessages.push(message);
+      console.debug("MESSAGE: ", message);
+      this.chatWindowComponent.handleChatMessage(message)
     } else {
       // Handle notifications for messages in other chats (optional)
-      console.log('New message for another chat:', message);
+      console.debug('New message for another chat:', message);
     }
   }
 
@@ -256,7 +256,7 @@ export class ChatPageContainerComponent {
     return this.dateService.isChatClosed(this.selectedCompleteChat.chat);
   }
 
-  
+ 
   getRemainingTime(): string {
     return this.dateService.getRemainingTime(this.selectedCompleteChat.chat);
   }

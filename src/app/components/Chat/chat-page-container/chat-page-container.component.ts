@@ -172,7 +172,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       complete: () => {
         console.debug("Chat creation complete");
         this.chatCreationLoading = false;
-        this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
+        this.snackBar.openFromComponent(ChatCreationSnackBarComponent, {duration: 5000})
         this.getUserChats();  // refetch list of chats
       }
     })
@@ -342,7 +342,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
 
 @Component({
-  selector: 'snack-bar-message',
+  selector: 'chat-creation-snack-bar',
   templateUrl: 'snack-bar-message.html',
   styles: `
     :host {
@@ -360,6 +360,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   standalone: true,
   imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
 })
-export class SnackBarMessageComponent {
+export class ChatCreationSnackBarComponent {
   snackBarRef = inject(MatSnackBarRef);
 }

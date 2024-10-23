@@ -63,7 +63,7 @@ export class GroupMenuComponent {
     createGroup.afterClosed().subscribe(result => {
       if (result === 201) {
         this.initializeWindow();
-        this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
+        this.snackBar.openFromComponent(GroupCreationSnackBarComponent, {duration: 5000})
       }
     });
   }
@@ -76,7 +76,7 @@ export class GroupMenuComponent {
 
 
 @Component({
-  selector: 'snack-bar-message',
+  selector: 'group-creation-snack-bar',
   templateUrl: 'snack-bar-message.html',
   styles: `
     :host {
@@ -94,6 +94,6 @@ export class GroupMenuComponent {
   standalone: true,
   imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
 })
-export class SnackBarMessageComponent {
+export class GroupCreationSnackBarComponent {
   snackBarRef = inject(MatSnackBarRef);
 }

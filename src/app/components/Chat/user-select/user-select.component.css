@@ -2,33 +2,57 @@
     min-height: 50px;
     background: orange;
   }
-  
-  .container {
-    width: 400px;
+
+  .main-container {
     max-width: 100%;
-    margin: 0 25px 25px 0;
-    display: inline-block;
-    vertical-align: top;
+    height: 100%; 
+    background-color: var(--primary-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 20px 20px;
+    overflow: hidden;
     
   }
 
-  .guess-container {
-    width: 400px;
-    max-width: 100%;
+  .drag-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 20px 20px;
+    overflow: hidden;
+
+  }
+  
+  .user-container {
+    min-width: 45%;
+    max-width: 45%;
     margin: 0 25px 25px 0;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     vertical-align: top;
-    background: white;
-    
+    background: var(--secondary-color);
+    border-radius: 5px;
+  }
+
+  .guess-container {
+    margin: 0 25px 25px 0;
+    display: flex;
+    flex-direction: column;
+    vertical-align: top;
+    background: var(--secondary-color);
+    border-radius: 5px;
   }
   
   .list {
     border: solid 1px #ccc;
     min-height: 60px;
-    background: white;
+    background: var(--secondary-color);
     border-radius: 4px;
-    overflow: hidden;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
   }
   
   .user-box {
@@ -36,6 +60,7 @@
     border-bottom: solid 1px #ccc;
     color: rgba(0, 0, 0, 0.87);
     display: flex;
+    width: 100%;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -43,7 +68,14 @@
     cursor: move;
     background: rgb(177, 177, 177);
     font-size: 14px;
-    
+  }
+
+  .box-title {
+    font-size: 14px;
+    font-family: "Open Sans", serif;
+    font-weight: 400;
+    color: var(--secondary-text-color);
+    margin-bottom: 25px;
   }
   
   .cdk-drag-preview {

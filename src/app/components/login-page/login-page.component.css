@@ -1,4 +1,4 @@
-.loginCard {
+/* .loginCard {
   display: flex;
   padding: 20px;
   justify-content: center;
@@ -12,10 +12,98 @@ height: 100vh;
 width: 100vw;
 margin:auto;
 }
+
 .loginContent{
   display: flex;
   padding: 10px;
   justify-content: center;
   align-content: center;
   margin: auto;
+} */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(359deg, #426495, #626262, #5e609c, #0b0b0b);
+  background-size: 800% 800%;
+  -webkit-animation: backgroundGradient 28s ease infinite;
+  -moz-animation: backgroundGradient 28s ease infinite;
+  animation: backgroundGradient 28s ease infinite;
+
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+#app-name {
+  font-size: 7vmax;
+  font-family: "Montserrat", serif;
+  font-optical-sizing: auto;
+  font-weight: 350;
+  font-style: normal;
+  color: whitesmoke;
+  text-shadow: -2px 2px rgb(68, 68, 68);
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.subheader {
+  color: rgb(206, 206, 206) !important;
+  font-weight: 500 !important;
+}
+
+#subtext {
+  font-size: 1.5vmax;
+  font-family: "Open Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+  color: rgb(190, 141, 207);
+  width: 80%;
+  max-width: 700px;
+  text-align: center;
+  line-height: 2vmax;
+}
+
+#get-started-button {
+  min-width: fit-content;
+  width: 10vmax;
+  max-width: 20px;
+  height: 3vmax;
+  display: flex;
+  flex-flow: row nowrap;
+  font-size: 1.2vmax;
+  text-wrap: nowrap;
+  color: whitesmoke;
+}
+
+
+@keyframes fadeIn {
+  0% {
+    filter: blur(1rem);
+    transform: scale(110%);
+  }
+  100% {
+    filter: blur(0);
+    transform: scale(100%);
+  }
+}
+
+@-webkit-keyframes backgroundGradient {
+  0%{background-position:53% 0%}
+  50%{background-position:48% 100%}
+  100%{background-position:53% 0%}
+}
+@-moz-keyframes backgroundGradient {
+  0%{background-position:53% 0%}
+  50%{background-position:48% 100%}
+  100%{background-position:53% 0%}
+}
+@keyframes backgroundGradient {
+  0%{background-position:53% 0%}
+  50%{background-position:48% 100%}
+  100%{background-position:53% 0%}
 }

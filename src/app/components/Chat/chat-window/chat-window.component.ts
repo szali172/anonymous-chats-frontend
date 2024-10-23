@@ -20,6 +20,7 @@ import { EndOfChatInfoComponent } from '../end-of-chat-info/end-of-chat-info.com
 import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 import { FilteredChatMessage } from '../../../models/chat/filtered-chat-message';
 import { filter } from 'rxjs';
+import { ChatGuess } from '../../../models/chat/chat-guess';
 
 
 @Component({
@@ -55,11 +56,14 @@ export class ChatWindowComponent implements OnInit {
 
   openChatMessages: ChatMessage[] = [];
   openChatUsers: ChatUser[] = []
-  chatUsersMapping: any = [];
+  chatUsersMapping: Map<string, string> = new Map<string, string>()
+  openChatUserGuesses: ChatGuess[] = [];
+
+  //state controls
   isChatClosed: boolean = true;
-  //loggedInUser = "1" // TODO: Remove later plzzzz
   isLoaded : boolean = false;
 
+  //message vars
   chatMessageInput = ''
   filteredChatMessageInput = ''
   previousMessageAuthor = '';
@@ -82,6 +86,7 @@ export class ChatWindowComponent implements OnInit {
     this.mapUsers();
     this.loadChatMessages(this.selectedCompleteChat.chat.id);
     this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+    this.getUserGuesses()
   }
 
   
@@ -122,6 +127,23 @@ export class ChatWindowComponent implements OnInit {
     })
   }
 
+  //grab the userGuesses to pass to child components. should realistically be passed up one level but thats for later.
+  getUserGuesses() {
+    this.chatService
+      .getUserGuesses(this.selectedCompleteChat.chat.id, this.loggedInUser)
+      .subscribe({
+        next: (data) => {
+          this.openChatUserGuesses = data;
+        },
+        error: (error) => {
+          console.error('Error pulling all user guesses', error);
+        },
+        complete: () => {
+          console.log('User pull complete.');
+          console.log(this.openChatUserGuesses);
+        },
+      });
+  }
 
   sendChatMessage(): void {
     const createMessageDto: CreateMessageDto = {
@@ -151,19 +173,23 @@ export class ChatWindowComponent implements OnInit {
 
 
   mapUsers() {
-    this.chatUsersMapping = []; // Clear previous mappings
-    this.openChatUsers.forEach(x => this.chatUsersMapping.push({
-      key: x.userId,
-      value: x.pseudonym
-    }))
+    //converted to actual mapping function
+    //this.chatUsersMapping = []; // Clear previous mappings
+    // this.openChatUsers.forEach(x => this.chatUsersMapping.push({
+    //   key: x.userId,
+    //   value: x.pseudonym
+    // }))
+
+    this.chatUsersMapping.clear()
+    this.openChatUsers.forEach(x => this.chatUsersMapping.set(x.userId,x.pseudonym))
   }
 
 
-  pullMessagePseudonym(message : ChatMessage): string {
-    if (this.chatUsersMapping[message.createdBy] === undefined) {
+  pullMessagePseudonym(message : ChatMessage): string | undefined {
+    if (this.chatUsersMapping.get(message.createdBy) === undefined) {
       return "Placeholder username";
     } else {
-      return this.chatUsersMapping[message.createdBy].value
+      return this.chatUsersMapping.get(message.createdBy)
     }
   }
 

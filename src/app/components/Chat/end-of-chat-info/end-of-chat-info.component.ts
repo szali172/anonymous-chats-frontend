@@ -24,6 +24,8 @@ export class EndOfChatInfoComponent {
 
   @Input({required: true}) chatId!: number;
   @Input({required: true}) chatUsersMapping: any;
+  @Input({required: true}) loggedInUser : string = ''
+  @Input({required: true}) openChatUserGuesses : ChatGuess[] = []
 
   memberPseudonyms: string[] = [];
   guessedUsernames: string[] = [];
@@ -34,23 +36,22 @@ export class EndOfChatInfoComponent {
     // this.auth.user$.subscribe((user) => {
     //   this.loadChatGuesses(user?.sub);
     // });
-    this.loadChatGuesses();  // TODO: remove afterwards
+    // this.loadChatGuesses();  // TODO: remove afterwards
+
+    this.populateUsernames(this.openChatUserGuesses)
   }
 
 
-  loadChatGuesses(userId: string = "") : void {
-    // this.chatService.getUserGuesses(this.chatId, userId).subscribe(guesses => {
-       this.chatService.getUserGuesses(22, "1").subscribe(guesses => {  // TODO: Remove plzzzzz
-        this.populateUsernames(guesses);
-    })
-  }
+  // loadChatGuesses(userId: string = "") : void {
+  //   // this.chatService.getUserGuesses(this.chatId, userId).subscribe(guesses => {
+  //      this.chatService.getUserGuesses(22, "1").subscribe(guesses => {  // TODO: Remove plzzzzz
+  //       this.populateUsernames(guesses);
+  //   })
+  // }
 
 
   populateUsernames(userGuesses: ChatGuess[]) : void {
     var dict: any = {}  // TODO: Remove this
-    dict['1'] = 'Lion';
-    dict['16'] = 'Bear';
-    dict['17'] = 'Wolf';
 
     // Prepare arrays of observables for fetching guessed and actual usernames
     const guessedUsernameObservables: Observable<string>[] = [];

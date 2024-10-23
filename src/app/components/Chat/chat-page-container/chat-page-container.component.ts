@@ -114,20 +114,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     })
 
 
-    // this.getUserGroups();
-    this.checkIfGroupAdmin();
 
-    // Start the SignalR connection and join each of the chats
-    this.chatService.startConnection().then(() => {
-      this.completeChats.forEach(completeChat => {
-        this.chatService.joinChatGroup(completeChat.chat.id);
-      });
-    });
-
-    // Subscribe to incoming messages
-    this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
-      this.handleIncomingMessage(message);
-    });
 
 
   }
@@ -202,6 +189,21 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     forkJoin(chatObservables).subscribe(completeChats => {
       this.completeChats = this.dateService.sortCompleteChatsByDate(completeChats);
     });
+
+        // this.getUserGroups();
+        this.checkIfGroupAdmin();
+
+        // Start the SignalR connection and join each of the chats
+        this.chatService.startConnection().then(() => {
+          this.completeChats.forEach(completeChat => {
+            this.chatService.joinChatGroup(completeChat.chat.id);
+          });
+        });
+    
+        // Subscribe to incoming messages
+        this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
+          this.handleIncomingMessage(message);
+        });
     this.isLoaded = true
   }
 

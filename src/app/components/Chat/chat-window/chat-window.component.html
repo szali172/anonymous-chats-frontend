@@ -7,7 +7,8 @@
                     [author]="message.createdBy"
                     [pseudonym]="pullMessagePseudonym(message)"
                     [repeatedAuthor]="isPreviousAuthor(message.createdBy)"
-                    [timeStamp]="message.createdOn">
+                    [timeStamp]="message.createdOn"
+                    [loggedInUser]="loggedInUser">
                 </app-message>
         }
 
@@ -15,7 +16,9 @@
         @if (isChatClosed) {
             <app-end-of-chat-info 
                 [chatId]="selectedCompleteChat.chat.id"
-                [chatUsersMapping]="chatUsersMapping">
+                [chatUsersMapping]="chatUsersMapping"
+                [loggedInUser]="loggedInUser"
+                [openChatUserGuesses]="openChatUserGuesses">
             </app-end-of-chat-info>
         }
     </div>
@@ -23,7 +26,7 @@
     @if (!isChatClosed) {
         <div class="input-bar">
             <mat-form-field class="input-field">
-                <mat-label>Send as {{chatUsersMapping[loggedInUser].value}}</mat-label>
+                <mat-label>Send as {{chatUsersMapping.get(loggedInUser)}}</mat-label>
                 <textarea 
                     matInput
                     [(ngModel)]="chatMessageInput"

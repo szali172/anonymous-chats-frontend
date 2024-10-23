@@ -104,7 +104,14 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   
   //on load grab all available chat objects with associated users
   ngOnInit(): void {
-    this.getUserChats();
+    this.auth.user$.subscribe((user) => {
+      if(user?.sub)
+        this.loggedInUser = user.sub
+      this.getUserChats();
+    });
+
+
+
 
   }
 

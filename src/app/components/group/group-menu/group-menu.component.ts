@@ -7,8 +7,10 @@ import { AuthService } from '@auth0/auth0-angular';
 import { MatButtonModule} from '@angular/material/button';
 import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
+import { MatSnackBar, MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
-import { environment } from '../../../../environments/environment';
+
 
 const USERID = "1";
 
@@ -25,15 +27,21 @@ export class GroupMenuComponent {
   userGroups: Group[] = [];
   isLoaded : boolean = false;
   readonly dialog = inject(MatDialog)
+  private snackBar = inject(MatSnackBar);
 
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.initializeWindow();
+  }
+
+
+  initializeWindow(): void {
     this.auth.user$.subscribe((user) => {
       this.loadUserGroups(user?.sub);
     });
   }
 
-  loadUserGroups(userId: string = "") {
+  loadUserGroups(userId: string = ""): void {
     // this.groupService.getUserGroups(userId).subscribe(groups => { // Remove after Azure setup
     this.groupService.getUserGroups(USERID).subscribe(groups => {
       this.userGroups = groups
@@ -42,17 +50,44 @@ export class GroupMenuComponent {
     });
   }
 
-  openCreateGroupPage() {
+  openCreateGroupPage(): void {
     const createGroup = this.dialog.open(GroupCreatePageComponent, {
-      width: '75vw',
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+      width: '700px'
     })
     createGroup.afterClosed().subscribe(result => {
+      if (result === 201) {
+        this.initializeWindow();
+        this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
+      }
     });
   }
 
   logout() {
     this.auth.logout()
   }
+}
+
+
+
+@Component({
+  selector: 'snack-bar-message',
+  templateUrl: 'snack-bar-message.html',
+  styles: `
+    :host {
+      display: flex;
+    }
+
+    #message {
+      color: white;
+    }
+
+    #button {
+      color: hotpink;
+    }
+  `,
+  standalone: true,
+  imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
+})
+export class SnackBarMessageComponent {
+  snackBarRef = inject(MatSnackBarRef);
 }

@@ -76,33 +76,20 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   private snackBar = inject(MatSnackBar);
   readonly dialog = inject(MatDialog);
   private timerSubscription!: Subscription;
-  public isLoaded : boolean = false
-
 
   @Input({required : true}) selectedGroup : Group = history.state;
   isGroupAdmin: boolean = false;
-  
-  //need to replace user with auth info
-  loggedInUser : string = "1"
+  loggedInUser : string = ""
 
-  //declare all of the various things needed for functionality. 
-  //Look to refactor later potentially and avoid needing to use this many
-  // chatMessages : ChatMessage[] = []
-  // userGuesses : ChatGuess[] = []
-  // userGroups : Group[] = []
-  // allChatUsers : Array<ChatUser[]> = []
-
-  // chats : Chat[] = []
   isChatSelected : boolean = false
   completeChats: CompleteChat[] = []
   selectedCompleteChat : CompleteChat | undefined;
+
   chatCreationLoading: boolean = false;
-  // isLoaded: boolean = false
+  isLoaded : boolean = false
+  remainingTime: string = '';
   
-  remainingTime: string = ''; // Timer display value
   
-  
-  //on load grab all available chat objects with associated users
   ngOnInit(): void {
     this.auth.user$.subscribe((user) => {
       if(user?.sub)
@@ -118,15 +105,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       this.timerSubscription.unsubscribe();
     }
   }
-  
-
-  //shamelessly stolen from groupmenu component
-  // getUserGroups() {
-  //   this.groupService.getUserGroups(this.loggedInUser).subscribe(groups => {
-  //     this.userGroups = groups
-  //   })
-  // }
-  
 
   
   getUserChats() {
@@ -139,10 +117,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         console.debug('Chat pull complete.')
-
-            // this.getUserGroups();
-          this.checkIfGroupAdmin();
-
+        this.checkIfGroupAdmin();
       }
     })
   }
@@ -170,8 +145,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
   /* ========== Helper Methods ========== */
 
-  // on success of pulling all chat users, starts the 
-  // process to consolidate into a single user chat object
+  // Consolidate all chats and its chat users
   buildCompleteChats(chats: Chat[]): void {
     this.completeChats = [];  // Clear previous chats
 
@@ -204,7 +178,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       });
     },50)
 
-
     this.isLoaded = true
   }
 
@@ -218,7 +191,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       console.error('Failed to get chat pseudonyms as a string');
       return '';
     }
-    
   }
 
 
@@ -234,19 +206,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   }
 
 
-  //this should be refactored to use filters as the data isn't super reliable
-  // buildUserChats() { 
-  //   for(let i = 0; i < this.chats.length; i++) {
-
-  //     this.completeChats.push({
-  //       chat: this.chats[i],
-  //       chatUsers: this.allChatUsers[i]
-  //     })
-  //   }
-  //   this.isLoaded = true;
-  // }
-
-
   checkIfGroupAdmin(): void {
     this.auth.user$.subscribe((user) => {
       if (user?.sub === this.selectedGroup.createdBy) {
@@ -256,7 +215,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   }
 
   
-  // Handle new incoming messages
   handleIncomingMessage(message: ChatMessage) {
     // If the message is for the currently selected chat, add it to the open chat messages
     if (message.chatId === this.selectedCompleteChat?.chat?.id) {
@@ -269,7 +227,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   }
 
 
-  //used to map the selected CompleteChat obect and pass it down to the chat window
   selectChatEvent(inputChatId : number) {
     // If current chat matches clicked chat, do nothing
     if (this.selectedCompleteChat && inputChatId === this.selectedCompleteChat.chat.id) {
@@ -277,17 +234,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     }
 
     this.selectedCompleteChat = this.completeChats.find(x => x.chat.id === inputChatId);
-    // if (!this.isChatSelected)
-    // {
-    //   // the use of '!' requires that this never be undefined, overriding the requirement from .find() that would return it as <T> | undefined
-      
-      
-    //   if(this.selectedCompleteChat === undefined) {
-    //     console.error("Error retreiving complete chat object.");
-    //   }
-
     this.startTimer();
-    // }
   }
 
 

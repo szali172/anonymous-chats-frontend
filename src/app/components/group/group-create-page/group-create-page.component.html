@@ -31,8 +31,8 @@
                     <mat-option [value]="user" (click)="addUserToTable(user)">{{user.userName}}</mat-option>
                   }
                 </mat-autocomplete>
-                <mat-hint id="members-required-hint" *ngIf="selectedUsers.length < 10">
-                  {{10 - selectedUsers.length}} more members required!
+                <mat-hint id="members-required-hint" *ngIf="selectedUsers.length < 5">
+                  {{5 - selectedUsers.length}} more members required!
                 </mat-hint>
               </mat-form-field>
                   

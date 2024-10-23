@@ -1,61 +1,79 @@
 
-<mat-dialog-content>
+<mat-dialog-content class="container">
   <form [formGroup]="newGroupForm">
-      <mat-card class="shipping-card">
+      <mat-card class="inner-container">
+
           <mat-card-header>
-            <mat-card-title>Create Group Form</mat-card-title>
+            <mat-card-title id="header">Create Group</mat-card-title>
           </mat-card-header>
+
           <mat-card-content>
-              <div class="row">
-                  <div class="col">
-                    <mat-form-field class="full-width">
-                      <input matInput placeholder="Group name" formControlName="name">
-                      @if (newGroupForm.controls['name'].hasError('required')) {
-                        <mat-error>Group name is <strong>required</strong></mat-error>
-                      }
-                    </mat-form-field>
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col">
-                    <button (click)="onSubmit()">Submit</button>
-                  </div>
-              </div>
-              <mat-form-field class="example-full-width">
-                <mat-label>Email Search</mat-label>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Group Name</mat-label>
+                <input matInput formControlName="name" [maxLength]="50">
+                @if (newGroupForm.controls['name'].hasError('required')) {
+                  <mat-error>Group name is <strong>required</strong></mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Search For Users</mat-label>
                 <input type="text"
                       placeholder=""
-                      aria-label="Email Search"
+                      aria-label="Username Search"
                       matInput
-                      name ="selectedUser"
+                      name="selectedUser"
                       [formControl] = "userSelectControl"
                       [matAutocomplete]="auto">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                   @for (user of availableUsers | async; track user) {
-                    <mat-option [value]="user" (click)="addUser(user)">{{user.email}}</mat-option>
+                    <mat-option [value]="user" (click)="addUserToTable(user)">{{user.userName}}</mat-option>
                   }
                 </mat-autocomplete>
+                <mat-hint id="members-required-hint" *ngIf="selectedUsers.length < 10">
+                  {{10 - selectedUsers.length}} more members required!
+                </mat-hint>
               </mat-form-field>
-                <table mat-table [dataSource]="selectedUsers">
-                  <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef>Id</th>
-                    <td mat-cell *matCellDef="let user">{{user.id}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="userName">
-                    <th mat-header-cell *matHeaderCellDef>Username</th>
-                    <td mat-cell *matCellDef="let user">{{user.userName}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="email">
-                    <th mat-header-cell *matHeaderCellDef>Email</th>
-                    <td mat-cell *matCellDef="let user">{{user.email}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="deleteButton">
-                    <th mat-header-cell *matHeaderCellDef>Delete</th>
-                    <td mat-cell *matCellDef="let user"><button (click)="deleteUserFromTable(user)">Remove</button></td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                </table>
+                  
+              <table mat-table [dataSource]="selectedUsers">
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef>Id</th>
+                  <td mat-cell *matCellDef="let user">{{user.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="userName">
+                  <th mat-header-cell *matHeaderCellDef>Username</th>
+                  <td mat-cell *matCellDef="let user">{{user.userName}}</td>
+                </ng-container>
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef>Email</th>
+                  <td mat-cell *matCellDef="let user">{{user.email}}</td>
+                </ng-container>
+                <ng-container matColumnDef="deleteButton">
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let user">
+                    <mat-icon
+                      class="delete-button"
+                      (click)="deleteUserFromTable(user)">
+                      delete
+                    </mat-icon>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+
+              <div class="submit-button-container">
+                <button 
+                  class="submit-button"
+                  type="submit"
+                  [disabled]="!formIsValid()"
+                  [ngClass]="!formIsValid() ? 'disabled-button' : 'active-button'"
+                  (click)="onSubmit()">
+                  Create Group
+                </button>
+              </div>
           </mat-card-content>
       </mat-card>
   </form>

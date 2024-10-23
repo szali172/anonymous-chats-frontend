@@ -104,19 +104,21 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   
   //on load grab all available chat objects with associated users
   ngOnInit(): void {
-    //starting with this to grab userID. should probably refactor to get this from the group page?
-    this.auth.user$.subscribe({
-      next: (user) =>{
-        if(user?.sub)
-          this.loggedInUser = user?.sub
-        this.getUserChats();
-      },
-    })
+    this.getUserChats();
+    // this.getUserGroups();
+    this.checkIfGroupAdmin();
 
+    // Start the SignalR connection and join each of the chats
+    this.chatService.startConnection().then(() => {
+      this.completeChats.forEach(completeChat => {
+        this.chatService.joinChatGroup(completeChat.chat.id);
+      });
+    });
 
-
-
-
+    // Subscribe to incoming messages
+    this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
+      this.handleIncomingMessage(message);
+    });
   }
 
 
@@ -178,6 +180,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   // process to consolidate into a single user chat object
   buildCompleteChats(chats: Chat[]): void {
     this.completeChats = [];  // Clear previous chats
+
     const chatObservables = chats.map(chatObj => 
       this.chatService.getChatUsers(chatObj.id).pipe(
         map(chatUsers => ({
@@ -186,24 +189,11 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
         }))
       )
     );
+  
     forkJoin(chatObservables).subscribe(completeChats => {
       this.completeChats = this.dateService.sortCompleteChatsByDate(completeChats);
     });
 
-        // this.getUserGroups();
-        this.checkIfGroupAdmin();
-
-        // Start the SignalR connection and join each of the chats
-        this.chatService.startConnection().then(() => {
-          this.completeChats.forEach(completeChat => {
-            this.chatService.joinChatGroup(completeChat.chat.id);
-          });
-        });
-    
-        // Subscribe to incoming messages
-        this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
-          this.handleIncomingMessage(message);
-        });
     this.isLoaded = true
   }
 
@@ -299,9 +289,8 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
 
   openGuessPage() {
-    console.log(this.loggedInUser)
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedCompleteChat!.chat.id, loggedInUser: this.loggedInUser},
+      data: {thisId : this.selectedCompleteChat!.chat.id},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',

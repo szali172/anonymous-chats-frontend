@@ -5,7 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { provideAuth0 } from '@auth0/auth0-angular';
-import { environment } from '../environments/environment';
+import { environment } from './environments/environment';
 
 
 export const appConfig: ApplicationConfig = {

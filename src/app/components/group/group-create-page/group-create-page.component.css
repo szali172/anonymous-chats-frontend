@@ -1,25 +1,92 @@
-.full-width {
-    width: 100%;
-  }
+.container {
+  background-color: rgba(14, 21, 23, 0.8);
+  padding: 10px;
+}
+
+.inner-container {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: var(--ternary-color);
+  border-radius: 15px;
+}
+
+#header {
+  font-size: 1.75rem;
+  font-family: "Open Sans", serif;
+  font-weight: 400;
+  color: var(--secondary-text-color);
+  margin-bottom: 25px;
+}
   
-  .mat-radio-button {
-    display: block;
-    margin: 5px 0;
-  }
-  
-  .row {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .col {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .col:last-child {
-    margin-right: 0;
-  }
-  table {
-    width: 100%;
-  }
+mat-form-field {
+  flex-grow: 1;
+  width: 90%;
+  margin: 10px 10px;
+}
+
+#members-required-hint {
+  color: rgb(167, 167, 167);
+  font-size: 0.8rem;
+}
+
+table {
+  width: 80%;
+}
+
+th {
+  font-family: "Open Sans", serif;
+  font-weight: 700;
+}
+
+tr {
+  background-color: #2f2c2c;
+  color: var(--secondary-text-color);
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+}
+
+mat-label {
+  color: rgb(137, 179, 214);
+}
+
+.delete-button {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.submit-button {
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-family: "Inter", serif;
+  font-size: 1rem;
+}
+
+.disabled-button {
+  border: 0;
+  background-color: rgba(128, 128, 128, 0.5);
+  color: rgb(143, 143, 143);
+  pointer-events: none;
+}
+
+.active-button {
+  border: 1px solid violet;
+  background-color: rgba(128, 128, 128, 0.1);
+  color: violet;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: ease all 0.2s;
+}
+
+.active-button:hover {
+  background-color: rgba(128, 128, 128, 0.6);
+  transition: ease all 0.2s;
+}

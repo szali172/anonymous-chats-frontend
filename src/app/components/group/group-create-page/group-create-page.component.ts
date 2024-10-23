@@ -125,7 +125,7 @@ export class GroupCreatePageComponent {
 
 
   formIsValid(): boolean {
-    return this.newGroupForm.valid && this.selectedUsers.length >= 10;
+    return this.newGroupForm.valid && this.selectedUsers.length >= 5;
   }
 
   

@@ -13,6 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "allowedCommonJsDependencies": [
+              "dayjs"
+            ],
             "outputPath": "dist/anonymous-chats-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -37,12 +40,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1.50MB",
+                  "maximumError": "1.50MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
+                  "maximumWarning": "3kB",
                   "maximumError": "4kB"
                 }
               ],

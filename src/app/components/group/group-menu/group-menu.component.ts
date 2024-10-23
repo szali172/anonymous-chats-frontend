@@ -17,7 +17,7 @@ const USERID = "1";
 @Component({
   selector: 'app-group-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, LoadingSpinnerComponent],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, MatIconModule, LoadingSpinnerComponent],
   templateUrl: './group-menu.component.html',
   styleUrl: './group-menu.component.css'
 })

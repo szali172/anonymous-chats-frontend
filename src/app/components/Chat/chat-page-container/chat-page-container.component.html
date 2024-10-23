@@ -40,7 +40,7 @@
 
     <h3 id="chats-header">Chats</h3>
     <hr id="chats-line-break">
-    <mat-nav-list class="chat-card-list">
+    <mat-nav-list class="chat-card-list" *ngIf="completeChats.length > 0; else empty_chats_list">
         <div
           class="chat-card"
           *ngFor="let chat of completeChats"
@@ -52,6 +52,19 @@
             </a>
         </div>
     </mat-nav-list>
+    
+    <ng-template #empty_chats_list>
+      <div id="empty-chats-message">
+        <span *ngIf="isGroupAdmin; else not_group_admin">
+          Start the conversation! Create a chat for your group.
+        </span>
+        <ng-template #not_group_admin>
+          <span>
+            Waiting for the host to create a chat. Stay tuned!
+          </span>
+        </ng-template>
+      </div>
+    </ng-template>
   </mat-sidenav>
 
   <mat-sidenav-content>

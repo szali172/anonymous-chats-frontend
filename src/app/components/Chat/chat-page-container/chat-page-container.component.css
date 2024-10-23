@@ -54,6 +54,14 @@ mat-toolbar .mat-primary {
   font-weight: 600;
 }
 
+#empty-chats-message {
+  margin: 10px auto;
+  width: 70%;
+  text-align: center;
+  text-justify: auto;
+  color: lightslategray;
+}
+
 .chat-card-list {
   display: flex;
   flex-flow: column;

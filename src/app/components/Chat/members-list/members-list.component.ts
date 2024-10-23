@@ -18,22 +18,22 @@ import { Group } from '../../../models/group/group';
   styleUrl: './members-list.component.css'
 })
 export class MembersListComponent {
-  auth = inject(AuthService)
   groupService = inject(GroupService)
 
   group : Group;
   groupMembers: User[] = [];
-  currentUserId: string | undefined = "5";  // TODO: remove hardcoded userId afterwards
+  loggedInUser: string = "";
 
   constructor(
     public dialogRef: MatDialogRef<MembersListComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { groupObject: Group }) 
-    {
-      this.group = data.groupObject;
-    }
+    @Inject(MAT_DIALOG_DATA) public data: { groupObject: Group, loggedInUser: string}) 
+  {
+    this.group = data.groupObject;
+    this.loggedInUser = data.loggedInUser;
+  }
 
+  
   ngOnInit(): void {
-    // this.auth.user$.subscribe((user) => { this.currentUserId = user?.sub;});
     this.loadGroupUsers();
   }
 
@@ -45,7 +45,7 @@ export class MembersListComponent {
   }
 
   isCurrentUser(userId: string) : boolean {
-    return this.currentUserId === userId;
+    return this.loggedInUser === userId;
   }
 
   isGroupAdmin(userId: string) : boolean {

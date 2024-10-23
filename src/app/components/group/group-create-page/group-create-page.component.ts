@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { CreateGroupDto } from '../../../models/group/create-group-dto';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +15,7 @@ import { User } from '../../../models/user';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { UserService } from '../../../services/user.service';
 import { GroupService } from '../../../services/group.service';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
@@ -45,6 +45,7 @@ export class GroupCreatePageComponent {
 
   newGroupForm : FormGroup
   allUsers : User[] = []
+  loggedInUser: string = '';
   filteredUsers : User[] = []
   availableUsers : Observable<User[]>
   selectedUsers : User[] = []
@@ -53,9 +54,20 @@ export class GroupCreatePageComponent {
   @ViewChild(MatTable) table! : MatTable<any>
   displayedColumns: string[] = ['userName', 'deleteButton'];
   
-  constructor(private dialogRef: MatDialogRef<GroupCreatePageComponent>, private fb : FormBuilder, private userService : UserService, private groupService : GroupService) {
+
+  constructor(private dialogRef: MatDialogRef<GroupCreatePageComponent>,
+              private fb : FormBuilder,
+              private userService : UserService,
+              private groupService : GroupService,
+              @Inject(MAT_DIALOG_DATA) public data: { loggedInUser : string } ) {
+    
+    this.loggedInUser = data.loggedInUser;
+    
     this.userService.getAllUsers().subscribe({
       next:(users) =>  {
+        // Remove admin (current user) from available users
+        var index = users.findIndex(item => item.id === this.loggedInUser);
+        users.splice(index, 1);
         this.allUsers = users;
       },
       error: (error) => {
@@ -121,7 +133,7 @@ export class GroupCreatePageComponent {
     if (this.formIsValid()) {
       const newGroup: CreateGroupDto = { 
         name: this.newGroupForm.controls['name'].value,
-        userIds: this.selectedUsers.map(x => x.id)
+        userIds: this.selectedUsers.map(x => x.id).concat([this.loggedInUser]) // Add owner to their own group
       };
 
       this.groupService.createGroup(newGroup).subscribe({
@@ -148,7 +160,7 @@ export class GroupCreatePageComponent {
     return this.allUsers.filter(user => 
       !this.selectedUsers.includes(user) && 
       user.userName.toLowerCase().includes(filterValue)
-  );
+    );
   }
 
 

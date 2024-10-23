@@ -13,6 +13,38 @@
     font-size: 3vmax;
 }
 
+#user-nav {
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 10px;
+    margin: 15px;
+}
+
+#logout-button {
+    border: 1px solid violet;
+    border-radius: 30px;
+    font-family: "Inter", serif;
+    font-size: 1rem;
+    background-color: rgba(128, 128, 128, 0.1);
+    color: violet;
+
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 10px 20px;
+    transition: ease all 0.2s;
+}
+
+#logout-button:hover {
+    transform: scale(105%);
+    background-color: rgba(128, 128, 128, 0.6);
+    transition: ease all 0.2s;
+}
+
 #group-list {
     display: flex;
     flex-flow: row wrap;

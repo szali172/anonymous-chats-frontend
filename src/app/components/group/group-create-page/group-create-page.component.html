@@ -42,7 +42,7 @@
                   <td mat-cell *matCellDef="let user">{{user.id}}</td>
                 </ng-container>
                 <ng-container matColumnDef="userName">
-                  <th mat-header-cell *matHeaderCellDef>Username</th>
+                  <th mat-header-cell *matHeaderCellDef>Members ({{selectedUsers.length}})</th>
                   <td mat-cell *matCellDef="let user">{{user.userName}}</td>
                 </ng-container>
                 <ng-container matColumnDef="email">

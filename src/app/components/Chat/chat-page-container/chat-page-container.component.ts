@@ -109,10 +109,6 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
         this.loggedInUser = user.sub
       this.getUserChats();
     });
-
-
-
-
   }
 
 

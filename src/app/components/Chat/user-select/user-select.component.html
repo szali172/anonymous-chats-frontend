@@ -1,7 +1,10 @@
-<mat-dialog-content>
-  <div cdkDropListGroup>
-    <div class="container">
-      <h2>Available Users</h2>
+<div class="main-container">
+
+
+<mat-dialog-content style="padding: 20px; background-color: var(--primary-color); height: 100%;">
+  <div cdkDropListGroup class="drag-container">
+    <div class="user-container">
+      <span class="box-title">Available Users</span>
 
       <div
         id="allUsersContainer"
@@ -23,25 +26,33 @@
       </div>
     </div>
     <!-- addin an ngif to prevent problems with displaying before calls were made -->
-    <div *ngIf="guesseePseudonyms.length > 0" class="guess-container">
+    <div style="min-width:45%;">
+    @if(guesseePseudonyms.length > 0) {
       @for (selectedUser of selectedUsers; track selectedUser;) {
-      <h2>Select a guess for {{ getMappingPseudonym($index) }}</h2>
-      <button (click)="clearSelection($index)">Clear Guess</button>
-      <div
-        id="{{ $index }}"
-        cdkDropList
-        [cdkDropListSortingDisabled]="true"
-        [cdkDropListData]="selectedUsers"
-        cdkDropList
-        class="list"
-        (cdkDropListDropped)="drop($event)"
-      >
-        <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
-          {{ selectedUser.userName }}
+      <div class="guess-container">
+        <span class="box-title">Select a guess for {{ getMappingPseudonym($index) }}</span>
+        <button (click)="clearSelection($index)">Clear Guess</button>
+        <div
+          id="{{ $index }}"
+          cdkDropList
+          [cdkDropListSortingDisabled]="true"
+          [cdkDropListData]="selectedUsers"
+          cdkDropList
+          class="list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
+            {{ selectedUser.userName }}
+          </div>
         </div>
-      </div>
+    </div>
       }
+    }
     </div>
   </div>
-  <button (click)="onSubmit()" mat-dialog-close>Save Guess</button>
+
 </mat-dialog-content>
+</div>
+<mat-dialog-actions style="background-color: var(--primary-color);;">
+  <button (click)="onSubmit()" mat-dialog-close>Save Guess</button>
+</mat-dialog-actions>

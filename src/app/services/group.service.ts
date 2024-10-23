@@ -29,12 +29,12 @@ export class GroupService {
     return this.httpClient.get<User[]>(`${environment.apiUrl}/${this.location}/GetGroupUsers/${id}`)
   }
 
-  createGroup(createGroupDto : CreateGroupDto): Observable<CreateGroupDto>{
-    return this.httpClient.post<CreateGroupDto>(`${environment.apiUrl}/${this.location}`, createGroupDto)
+  createGroup(createGroupDto : CreateGroupDto): Observable<Group>{
+    return this.httpClient.post<Group>(`${environment.apiUrl}/${this.location}`, createGroupDto)
   }
 
-  updateGroup(id: number, updateGroupDto : UpdateGroupDto): Observable<UpdateGroupDto>{
-    return this.httpClient.put<UpdateGroupDto>(`${environment.apiUrl}/${this.location}/${id}`, updateGroupDto)
+  updateGroup(id: number, updateGroupDto : UpdateGroupDto): Observable<Group>{
+    return this.httpClient.put<Group>(`${environment.apiUrl}/${this.location}/${id}`, updateGroupDto)
   }
 
   deleteGroup(id : number): Observable<void>{

@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { CreateGroupDto } from '../../../models/group/create-group-dto';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -9,18 +9,20 @@ import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule} from '@angular/material/autocomplete';
 import { Observable} from 'rxjs';
 import { map, startWith} from 'rxjs/operators';
-import { AsyncPipe} from '@angular/common';
+import { AsyncPipe, CommonModule} from '@angular/common';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { User } from '../../../models/user';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { UserService } from '../../../services/user.service';
 import { GroupService } from '../../../services/group.service';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-group-create-page',
   standalone: true,
-  imports: [    
+  imports: [
+    CommonModule,
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
@@ -30,6 +32,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatIconModule,
     ReactiveFormsModule,
     AsyncPipe,
     MatTableModule,
@@ -40,9 +43,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 })
 export class GroupCreatePageComponent {
 
-  newGroup : CreateGroupDto = {name : '', userIds: []}
   newGroupForm : FormGroup
-  selectedUserIds : string[] = []
   allUsers : User[] = []
   filteredUsers : User[] = []
   availableUsers : Observable<User[]>
@@ -50,96 +51,107 @@ export class GroupCreatePageComponent {
   userSelectControl  = new FormControl<string | User> ('')
 
   @ViewChild(MatTable) table! : MatTable<any>
-
-
-  displayedColumns: string[] = ['id', 'userName', 'email', 'deleteButton'];
+  displayedColumns: string[] = ['userName', 'deleteButton'];
   
-
-  constructor(private fb : FormBuilder, private userService : UserService, private groupService : GroupService) {
-
-    userService.getAllUsers().subscribe({
-      next:(data) =>  {
-        this.allUsers = data;
+  constructor(private dialogRef: MatDialogRef<GroupCreatePageComponent>, private fb : FormBuilder, private userService : UserService, private groupService : GroupService) {
+    this.userService.getAllUsers().subscribe({
+      next:(users) =>  {
+        this.allUsers = users;
       },
       error: (error) => {
-        console.error('Error pulling all users', error)
+        console.error('Error pulling all users', error);
       },
       complete: () => {
-        console.log('User pull complete.')
-        console.log(this.allUsers)
+        console.debug('User pull complete.');
+        this.updateFilteredUsers();
       }
     })
 
     this.newGroupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(4)]],
     })
-    
-    this.filteredUsers = this.allUsers.filter(x => !this.selectedUsers.includes(x))
-    
+        
     this.availableUsers = this.userSelectControl.valueChanges.pipe(
       startWith(''),
       map(value => {
-        const email = typeof value === 'string' ? value : value?.email;
-        return email ? this._filter(email as string) : this.allUsers.slice();
+        const username = typeof value === 'string' ? value : value?.userName;
+        return username ? this._filter(username as string) : this.getUnselectedUsers();
       }),
     );
   }
-
   
 
-  addUser(user : User) {
-    if(this.selectedUsers.find(x => x === user))
-    {
+  addUserToTable(user: User): void {
+    if (!this.selectedUsers.find(x => x === user)) {
+      this.selectedUsers.push(user);
+      this.updateFilteredUsers();
+      this.table.renderRows();
+      this.userSelectControl.reset();
+      
+    } else {
       console.error("Unable to add user: User already exists in selection.")
     }
-    else
-    {
-      this.selectedUsers.push(user)
-      this.table.renderRows()
-      this.userSelectControl.reset()
-    }
-    }
-
-  //need to change to select users once add user is working correctly
-  deleteUserFromTable(user : User) {
-    var index = this.selectedUsers.indexOf(user, 0)
-    console.log(index)
-    console.log('splicing user')
-    this.selectedUsers.splice(index,1)
-    console.log(this.allUsers)
-    this.table.renderRows()
   }
 
-  onSubmit() {
-    this.selectedUsers.forEach(x => {this.selectedUserIds.push(x.id.toString())})
 
-    if (this.newGroupForm.valid && this.selectedUserIds.length > 9)
-    {
-      this.newGroup.name = this.newGroupForm.controls['name'].value
-      this.newGroup.userIds = this.selectedUserIds
-      this.groupService.createGroup(this.newGroup).subscribe({
-        next:(data) =>  {
-          console.log(data)
-        },
+  deleteUserFromTable(user: User): void {
+    if (this.selectedUsers.find(x => x === user)) {
+      var index = this.selectedUsers.indexOf(user, 0);
+      this.selectedUsers.splice(index, 1);
+      this.updateFilteredUsers();
+      this.table.renderRows();
+
+    } else {
+      console.error("Unable to delete user: User does not exist in selections list.")
+    } 
+  }
+
+
+  updateFilteredUsers(): void {
+    this.filteredUsers = this.allUsers.filter(user => !this.selectedUsers.includes(user));
+  }
+
+
+  formIsValid(): boolean {
+    return this.newGroupForm.valid && this.selectedUsers.length >= 10;
+  }
+
+  
+  onSubmit(): void {
+    if (this.formIsValid()) {
+      const newGroup: CreateGroupDto = { 
+        name: this.newGroupForm.controls['name'].value,
+        userIds: this.selectedUsers.map(x => x.id)
+      };
+
+      this.groupService.createGroup(newGroup).subscribe({
         error: (error) => {
           console.error('Error creating group: ', error)
         },
         complete: () => {
-          console.log('Successfully created group.')
+          console.debug('Successfully created group.')
+          this.dialogRef.close(201);
         }
       })
-      console.log(this.newGroup)
     }
   }
 
-  private _filter(email: string): User[] {
-    const filterValue = email.toLowerCase();
-    this.filteredUsers = this.allUsers.filter(x => !this.selectedUsers.includes(x))
-    return this.filteredUsers.filter(user => user.email.toLowerCase().includes(filterValue));
-  }
 
   displayFn(user: User): string {
-    return user && user.email ? user.email : '';
+    return user && user.userName ? user.userName : '';
   }
 
+
+  private _filter(username: string): User[] {
+    const filterValue = username.toLowerCase();
+    return this.allUsers.filter(user => 
+      !this.selectedUsers.includes(user) && 
+      user.userName.toLowerCase().includes(filterValue)
+  );
+  }
+
+
+  private getUnselectedUsers(): User[] {
+    return this.allUsers.filter(user => !this.selectedUsers.includes(user));
+  }
 }

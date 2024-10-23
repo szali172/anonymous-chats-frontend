@@ -7,13 +7,15 @@ import { AuthService } from '@auth0/auth0-angular';
 import { MatButtonModule} from '@angular/material/button';
 import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
+import { MatSnackBar, MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 
 const USERID = "1";
 
 @Component({
   selector: 'app-group-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, MatIconModule],
   templateUrl: './group-menu.component.html',
   styleUrl: './group-menu.component.css'
 })
@@ -22,15 +24,21 @@ export class GroupMenuComponent {
   groupService = inject(GroupService);
   userGroups: Group[] = [];
   readonly dialog = inject(MatDialog)
+  private snackBar = inject(MatSnackBar);
 
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.initializeWindow();
+  }
+
+
+  initializeWindow(): void {
     this.auth.user$.subscribe((user) => {
       this.loadUserGroups(user?.sub);
     });
   }
 
-  loadUserGroups(userId: string = "") {
+  loadUserGroups(userId: string = ""): void {
     // this.groupService.getUserGroups(userId).subscribe(groups => { // Remove after Azure setup
     this.groupService.getUserGroups(USERID).subscribe(groups => {
       this.userGroups = groups
@@ -38,13 +46,40 @@ export class GroupMenuComponent {
     });
   }
 
-  openCreateGroupPage() {
+  openCreateGroupPage(): void {
     const createGroup = this.dialog.open(GroupCreatePageComponent, {
-      width: '75vw',
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+      width: '700px'
     })
     createGroup.afterClosed().subscribe(result => {
+      if (result === 201) {
+        this.initializeWindow();
+        this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
+      }
     });
   }
+}
+
+
+
+@Component({
+  selector: 'snack-bar-message',
+  templateUrl: 'snack-bar-message.html',
+  styles: `
+    :host {
+      display: flex;
+    }
+
+    #message {
+      color: white;
+    }
+
+    #button {
+      color: hotpink;
+    }
+  `,
+  standalone: true,
+  imports: [MatButtonModule, MatSnackBarLabel, MatSnackBarActions, MatSnackBarAction],
+})
+export class SnackBarMessageComponent {
+  snackBarRef = inject(MatSnackBarRef);
 }

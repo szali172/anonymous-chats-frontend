@@ -104,20 +104,10 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   
   //on load grab all available chat objects with associated users
   ngOnInit(): void {
-    this.getUserChats();
-    // this.getUserGroups();
-    this.checkIfGroupAdmin();
-
-    // Start the SignalR connection and join each of the chats
-    this.chatService.startConnection().then(() => {
-      this.completeChats.forEach(completeChat => {
-        this.chatService.joinChatGroup(completeChat.chat.id);
-      });
-    });
-
-    // Subscribe to incoming messages
-    this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
-      this.handleIncomingMessage(message);
+    this.auth.user$.subscribe((user) => {
+      if(user?.sub)
+        this.loggedInUser = user.sub
+      this.getUserChats();
     });
   }
 
@@ -149,6 +139,21 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         console.debug('Chat pull complete.')
+
+            // this.getUserGroups();
+          this.checkIfGroupAdmin();
+
+          // Start the SignalR connection and join each of the chats
+          this.chatService.startConnection().then(() => {
+            this.completeChats.forEach(completeChat => {
+              this.chatService.joinChatGroup(completeChat.chat.id);
+            });
+          });
+
+          // Subscribe to incoming messages
+          this.chatService.onMessageReceived().subscribe((message: ChatMessage) => {
+            this.handleIncomingMessage(message);
+          });
       }
     })
   }
@@ -290,7 +295,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedCompleteChat!.chat.id},
+      data: {thisId : this.selectedCompleteChat!.chat.id, loggedInUser: this.loggedInUser},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',

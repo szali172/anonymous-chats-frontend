@@ -139,8 +139,8 @@ export class ChatWindowComponent implements OnInit {
           console.error('Error pulling all user guesses', error);
         },
         complete: () => {
-          console.log('User pull complete.');
-          console.log(this.openChatUserGuesses);
+          console.debug('User pull complete.');
+          console.debug(this.openChatUserGuesses);
         },
       });
   }

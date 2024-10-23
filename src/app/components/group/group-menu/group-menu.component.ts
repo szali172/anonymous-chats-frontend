@@ -45,7 +45,9 @@ export class GroupMenuComponent {
     });
   }
 
+
   loadUserGroups(userId: string) {
+
     // this.groupService.getUserGroups(userId).subscribe(groups => { // Remove after Azure setup
     this.groupService.getUserGroups(userId).subscribe(groups => {
       this.userGroups = groups

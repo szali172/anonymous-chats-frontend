@@ -50,6 +50,11 @@ export class ChatService {
     return this.messagesSubject.asObservable();
   }
 
+  //Disconnect from group
+  public endConnection() {
+    return this.hubConnection.stop()
+  }
+
 
   // Backend endpoints
   getUserChats(userId : string, groupId : number): Observable<Chat[]>{

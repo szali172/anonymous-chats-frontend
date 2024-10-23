@@ -1,3 +1,4 @@
+@if(isLoaded) {
 <div class="container">
         <div class="message-window" itemSize="10" id="message-window">
             @for(message of openChatMessages; track message) {
@@ -39,10 +40,14 @@
                 type="submit"
                 [disabled]="chatMessageInput.length === 0"
                 [ngClass]="chatMessageInput.length === 0 ? 'inactive-button' : ''"
-                (click)="sendChatMessage()">
+                (click)="filterChatMessage()">
                 Send
             </button>
         </div>
     }
     
 </div>
+}
+@else {
+    <app-loading-spinner></app-loading-spinner>
+}

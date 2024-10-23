@@ -9,13 +9,15 @@ import { MatDialog, MatDialogModule} from '@angular/material/dialog';
 import { GroupCreatePageComponent } from '../group-create-page/group-create-page.component';
 import { MatSnackBar, MatSnackBarAction, MatSnackBarActions, MatSnackBarLabel, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
+
 
 const USERID = "1";
 
 @Component({
   selector: 'app-group-menu',
   standalone: true,
-  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, MatIconModule],
+  imports: [CommonModule, RouterModule, MatButtonModule, MatDialogModule, LoadingSpinnerComponent],
   templateUrl: './group-menu.component.html',
   styleUrl: './group-menu.component.css'
 })
@@ -23,6 +25,7 @@ export class GroupMenuComponent {
   auth = inject(AuthService);
   groupService = inject(GroupService);
   userGroups: Group[] = [];
+  isLoaded : boolean = false;
   readonly dialog = inject(MatDialog)
   private snackBar = inject(MatSnackBar);
 
@@ -43,6 +46,7 @@ export class GroupMenuComponent {
     this.groupService.getUserGroups(USERID).subscribe(groups => {
       this.userGroups = groups
       console.log(groups);
+      this.isLoaded = true;
     });
   }
 
@@ -56,6 +60,10 @@ export class GroupMenuComponent {
         this.snackBar.openFromComponent(SnackBarMessageComponent, {duration: 5000})
       }
     });
+  }
+
+  logout() {
+    this.auth.logout()
   }
 }
 

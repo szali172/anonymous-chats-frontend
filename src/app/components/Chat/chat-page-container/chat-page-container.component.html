@@ -1,3 +1,4 @@
+@if(isLoaded) {
 <mat-sidenav-container class="sidenav-container">
 
   <mat-sidenav #drawer class="sidenav" fixedInViewport
@@ -120,3 +121,8 @@
 
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+}
+@else {
+    <app-loading-spinner></app-loading-spinner>
+}

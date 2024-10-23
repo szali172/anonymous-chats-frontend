@@ -1,5 +1,8 @@
+@if(isLoaded){
 <div class="container">
     <h1 id="title" class="noselect">Your Groups</h1>
+
+    <button (click)="logout()">Logout</button>
     
     <div id="group-list">
         <a id="create-group-button" class="group-card" (click)="openCreateGroupPage()">
@@ -16,3 +19,7 @@
         </a>
     </div>
 </div>
+}
+@else {
+    <app-loading-spinner></app-loading-spinner>
+}

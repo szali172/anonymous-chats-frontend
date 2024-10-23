@@ -287,8 +287,8 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
   openMembersList(): void {
     const dialogRef = this.dialog.open(MembersListComponent, {
-      maxWidth: "lg",
-      data: { groupObject: this.selectedGroup }
+      width: "400px",
+      data: { groupObject: this.selectedGroup, loggedInUser: this.loggedInUser }
     });
   }
 

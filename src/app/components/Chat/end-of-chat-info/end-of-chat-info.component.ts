@@ -18,7 +18,6 @@ import { forkJoin, Observable, of } from 'rxjs';
   styleUrl: './end-of-chat-info.component.css'
 })
 export class EndOfChatInfoComponent {
-  auth = inject(AuthService);
   chatService = inject(ChatService);
   userService = inject(UserService)
 
@@ -33,9 +32,6 @@ export class EndOfChatInfoComponent {
   userCache: Record<string, string> = {};
 
   ngOnInit() {
-    // this.auth.user$.subscribe((user) => {
-    //   this.loadChatGuesses(user?.sub);
-    // });
     // this.loadChatGuesses();  // TODO: remove afterwards
 
     this.populateUsernames(this.openChatUserGuesses)
@@ -51,14 +47,12 @@ export class EndOfChatInfoComponent {
 
 
   populateUsernames(userGuesses: ChatGuess[]) : void {
-    var dict: any = {}  // TODO: Remove this
-
     // Prepare arrays of observables for fetching guessed and actual usernames
     const guessedUsernameObservables: Observable<string>[] = [];
     const actualUsernameObservables: Observable<string>[] = [];
     
     for (const chatGuess of userGuesses) {
-      this.memberPseudonyms.push(dict[chatGuess.actualId]);
+      this.memberPseudonyms.push(this.chatUsersMapping[chatGuess.actualId]);
 
       guessedUsernameObservables.push(
         chatGuess.guesseeId !== null ? 

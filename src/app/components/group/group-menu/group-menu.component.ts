@@ -12,8 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { LoadingSpinnerComponent } from '../../loading-spinner/loading-spinner.component';
 
 
-const USERID = "1";
-
 @Component({
   selector: 'app-group-menu',
   standalone: true,
@@ -58,6 +56,7 @@ export class GroupMenuComponent {
 
   openCreateGroupPage(): void {
     const createGroup = this.dialog.open(GroupCreatePageComponent, {
+      data: { loggedInUser: this.loggedInUser },
       width: '700px'
     })
     createGroup.afterClosed().subscribe(result => {

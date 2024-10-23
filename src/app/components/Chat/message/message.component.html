@@ -1,9 +1,9 @@
-<div class="container" [ngClass]="USERID === author ? 'container-right' : 'container-left'">
+<div class="container" [ngClass]="loggedInUser === author ? 'container-right' : 'container-left'">
     <span class="sender-name" *ngIf="!repeatedAuthor">{{pseudonym}}</span>
     <div class="message-box" 
-        [ngClass]="USERID === author ? 'message-right' : 'message-left'"
+        [ngClass]="loggedInUser === author ? 'message-right' : 'message-left'"
         [matTooltip]="dateService.convertUTCDateToLocalDate(timeStamp)" 
-        [matTooltipPosition]="USERID === author ? 'left' : 'right'">
+        [matTooltipPosition]="loggedInUser === author ? 'left' : 'right'">
         <span>
             {{message}}
         </span>

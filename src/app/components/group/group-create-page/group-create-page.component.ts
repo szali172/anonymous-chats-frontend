@@ -125,6 +125,7 @@ export class GroupCreatePageComponent {
       };
 
       this.groupService.createGroup(newGroup).subscribe({
+
         error: (error) => {
           console.error('Error creating group: ', error)
         },

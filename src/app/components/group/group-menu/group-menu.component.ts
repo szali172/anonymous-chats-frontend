@@ -26,6 +26,7 @@ export class GroupMenuComponent {
   groupService = inject(GroupService);
   userGroups: Group[] = [];
   isLoaded : boolean = false;
+  loggedInUser: string = ''
   readonly dialog = inject(MatDialog)
   private snackBar = inject(MatSnackBar);
 
@@ -37,13 +38,18 @@ export class GroupMenuComponent {
 
   initializeWindow(): void {
     this.auth.user$.subscribe((user) => {
-      this.loadUserGroups(user?.sub);
+      if(user?.sub)
+        this.loggedInUser = user.sub
+      this.loadUserGroups(this.loggedInUser);
+
     });
   }
 
-  loadUserGroups(userId: string = ""): void {
+
+  loadUserGroups(userId: string) {
+
     // this.groupService.getUserGroups(userId).subscribe(groups => { // Remove after Azure setup
-    this.groupService.getUserGroups(USERID).subscribe(groups => {
+    this.groupService.getUserGroups(userId).subscribe(groups => {
       this.userGroups = groups
       console.log(groups);
       this.isLoaded = true;

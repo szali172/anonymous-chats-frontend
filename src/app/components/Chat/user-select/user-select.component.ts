@@ -49,11 +49,7 @@ export class UserSelectComponent {
   filteredUsers: User[] = [];
   availableUsers: Observable<User[]>;
   userSelectControl = new FormControl<string | User>('');
-  loggedInUser: User = {
-    id: '8',
-    userName: 'user1',
-    email: 'user1email@com.us',
-  };
+  loggedInUser: string = ''
   userGuesses: ChatGuess[] = [];
   //guesseePseudonyms : Map<string, string> = new Map <string,string>
   guesseePseudonyms: ChatUser[] = [];
@@ -69,7 +65,11 @@ export class UserSelectComponent {
 
   displayedColumns: string[] = ['id', 'userName', 'email', 'deleteButton'];
 
-  constructor( private userService: UserService, private chatService: ChatService,  @Inject(MAT_DIALOG_DATA) public data: {thisId : number} ) {
+  constructor( private userService: UserService, private chatService: ChatService,  @Inject(MAT_DIALOG_DATA) public data: {thisId : number, loggedInUser : string} ) {
+    //map current chat value to passed in item:
+    this.currentChat = this.data.thisId
+    this.loggedInUser = this.data.loggedInUser
+
     //spin up all users to start with
     this.getAllUsers();
     this.getUserGuesses();
@@ -83,8 +83,6 @@ export class UserSelectComponent {
       })
     );
 
-    //map current chat value to passed in item:
-    this.currentChat = this.data.thisId
   }
 
   //actual filtering service based on user input that is being typed
@@ -138,7 +136,7 @@ export class UserSelectComponent {
 
   getUserGuesses() {
     this.chatService
-      .getUserGuesses(this.currentChat, this.loggedInUser.id)
+      .getUserGuesses(this.currentChat, this.loggedInUser)
       .subscribe({
         next: (data) => {
           this.userGuesses = data;
@@ -201,7 +199,7 @@ export class UserSelectComponent {
 
         //remove loggedin user from call
         let loggedinIndex = this.guesseePseudonyms.findIndex(
-          (x) => x.userId === this.loggedInUser.id
+          (x) => x.userId === this.loggedInUser
         );
         this.guesseePseudonyms.splice(loggedinIndex, 1);
         console.log('ChatUsers: ');

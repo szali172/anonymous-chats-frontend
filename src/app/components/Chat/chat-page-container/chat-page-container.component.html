@@ -88,7 +88,16 @@
 
         <div id="chat-window-header-right">
           <div id="chat-timer">
-            <span [ngClass]="{ 'red-text': isTimeBelowTenMinutes() }">Time Left: {{ getRemainingTime() }}</span>
+            <span 
+              *ngIf="(isHandset$ | async); else full_time_display"
+              [ngClass]="{ 'red-text': isTimeBelowTenMinutes() }">
+              {{ getRemainingTime() }}
+            </span>
+            <ng-template #full_time_display>
+              <span>
+                Time Left: {{ getRemainingTime() }}
+              </span>
+            </ng-template>
           </div>
   
           <button 

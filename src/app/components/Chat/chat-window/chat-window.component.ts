@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { ChatService } from '../../../services/chat.service';
 import { CommonModule } from '@angular/common';
 import { ChatMessage } from '../../../models/chat/chat-message';
@@ -65,6 +65,7 @@ export class ChatWindowComponent implements OnInit {
 
   //message vars
   chatMessageInput = ''
+  tempChatMessage = ''  // Holds on to chatMessage when it's cleared
   filteredChatMessageInput = ''
   previousMessageAuthor = '';
 
@@ -80,13 +81,20 @@ export class ChatWindowComponent implements OnInit {
     }
   }
 
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
+  }
+
 
   intializeWindow(): void {
     this.openChatUsers = this.selectedCompleteChat.chatUsers
     this.mapUsers();
     this.loadChatMessages(this.selectedCompleteChat.chat.id);
-    this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
-    this.getUserGuesses()
+
+    setTimeout(() => {
+      this.isChatClosed = this.dateService.isChatClosed(this.selectedCompleteChat.chat);
+      this.getUserGuesses();
+    }, 0);
   }
 
   
@@ -109,22 +117,25 @@ export class ChatWindowComponent implements OnInit {
 
   //need to fix the service returning an obj with result: string instead of a direct string.
   filterChatMessage(): void {
-    let filterObject : FilteredChatMessage;
-    this.textFilterService.filterChatmessage(this.chatMessageInput).subscribe({
-      next:(data) => {
-        filterObject = data
-        this.filteredChatMessageInput = filterObject.result
-        this.sendChatMessage()
-      },
-      error: (error) => {
-        console.error('Error sending filter message', error)
-      },
-      complete: () => {
-        console.debug('Filter Message Complete')
+    if (this.chatMessageInput.length > 0) {
+      this.tempChatMessage = this.chatMessageInput;
+      this.chatMessageInput = '';  // Reset input before going through filter api
 
-      }
-
-    })
+      let filterObject : FilteredChatMessage;
+      this.textFilterService.filterChatmessage(this.tempChatMessage).subscribe({
+        next:(data) => {
+          filterObject = data
+          this.filteredChatMessageInput = filterObject.result
+        },
+        error: (error) => {
+          console.error('Error sending filter message', error)
+        },
+        complete: () => {
+          console.debug('Filter Message Complete')
+          this.sendChatMessage()
+        }
+      })
+    }
   }
 
   //grab the userGuesses to pass to child components. should realistically be passed up one level but thats for later.
@@ -148,18 +159,17 @@ export class ChatWindowComponent implements OnInit {
   sendChatMessage(): void {
     const createMessageDto: CreateMessageDto = {
       chatId: this.selectedCompleteChat.chat.id,
-      originalMessage: this.chatMessageInput,
+      originalMessage: this.tempChatMessage,
       filteredMessage: this.filteredChatMessageInput
     }
-    
-    this.chatMessageInput = '';  // Clear chat input
 
     this.chatService.createChatMessage(createMessageDto).subscribe({
       error: (error) => {
         console.error('Error pulling all chats', error)
       },
       complete: () => {
-        console.debug('Chat send complete.')
+        console.debug('Chat send complete.');
+        this.tempChatMessage = '';  // Clear temp message once successfully posted
       }
     })    
   }
@@ -167,8 +177,8 @@ export class ChatWindowComponent implements OnInit {
 
   //this takes in a message sent from the signalR to Parent component
   handleChatMessage(message : ChatMessage) {
-    this.openChatMessages.push(message)
-    this.scrollToBottom()
+    this.openChatMessages.push(message);
+    this.scrollToBottom();
   }
 
 

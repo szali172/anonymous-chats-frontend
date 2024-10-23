@@ -13,7 +13,7 @@
         }
 
         <!-- Display chat closed section -->
-        @if (isChatClosed) {
+        @if (isChatClosed && openChatUserGuesses.length > 0) {
             <app-end-of-chat-info 
                 [chatId]="selectedCompleteChat.chat.id"
                 [chatUsersMapping]="chatUsersMapping"

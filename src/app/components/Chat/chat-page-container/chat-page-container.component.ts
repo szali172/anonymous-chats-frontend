@@ -299,8 +299,9 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
 
 
   openGuessPage() {
+    console.log(this.loggedInUser)
     const openGuess = this.dialog.open(UserSelectComponent, {
-      data: {thisId : this.selectedCompleteChat!.chat.id},
+      data: {thisId : this.selectedCompleteChat!.chat.id, loggedInUser: this.loggedInUser},
       width: '75vw',
       height: '75vh',
       maxWidth: '90vw',

@@ -70,6 +70,9 @@ export class ChatWindowComponent implements OnInit {
   previousMessageAuthor = '';
 
 
+  constructor(private cdr: ChangeDetectorRef) {}
+  
+
   ngOnInit(): void {
     this.intializeWindow();
   }
@@ -78,6 +81,7 @@ export class ChatWindowComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCompleteChat']) {
       this.intializeWindow();
+      this.cdr.detectChanges();
     }
   }
 
@@ -151,7 +155,6 @@ export class ChatWindowComponent implements OnInit {
         },
         complete: () => {
           console.debug('User pull complete.');
-          console.debug(this.openChatUserGuesses);
         },
       });
   }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, SimpleChanges } from '@angular/core';
 import { ChatService } from '../../../services/chat.service';
 import { EndOfChatUserTableComponent } from "../end-of-chat-user-table/end-of-chat-user-table.component";
 import { MatDividerModule } from '@angular/material/divider';
@@ -22,19 +22,26 @@ export class EndOfChatInfoComponent {
   userService = inject(UserService)
 
   @Input({required: true}) chatId!: number;
-  @Input({required: true}) chatUsersMapping: any;
-  @Input({required: true}) loggedInUser : string = ''
-  @Input({required: true}) openChatUserGuesses : ChatGuess[] = []
+  @Input({required: true}) chatUsersMapping!: Map<string, string>;
+  @Input({required: true}) loggedInUser : string = '';
+  @Input({required: true}) openChatUserGuesses : ChatGuess[] = [];
 
   memberPseudonyms: string[] = [];
   guessedUsernames: string[] = [];
   actualUsernames: string[] = [];
   userCache: Record<string, string> = {};
 
+
   ngOnInit() {
     // this.loadChatGuesses();  // TODO: remove afterwards
-
     this.populateUsernames(this.openChatUserGuesses)
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['chatId'] || changes['openChatUserGuesses']) {
+      this.populateUsernames(this.openChatUserGuesses);
+    }
   }
 
 
@@ -48,11 +55,12 @@ export class EndOfChatInfoComponent {
 
   populateUsernames(userGuesses: ChatGuess[]) : void {
     // Prepare arrays of observables for fetching guessed and actual usernames
+    this.memberPseudonyms = [];  // Clear previous mappings
     const guessedUsernameObservables: Observable<string>[] = [];
     const actualUsernameObservables: Observable<string>[] = [];
     
     for (const chatGuess of userGuesses) {
-      this.memberPseudonyms.push(this.chatUsersMapping[chatGuess.actualId]);
+      this.memberPseudonyms.push(this.chatUsersMapping.get(chatGuess.actualId) || '');
 
       guessedUsernameObservables.push(
         chatGuess.guesseeId !== null ? 
@@ -73,7 +81,7 @@ export class EndOfChatInfoComponent {
   getUsername(userId: string) : Observable<string> {
     // If user was previously fetched, use cached username
     if (userId in this.userCache) {
-      console.log("Cache hit")
+      console.info("Cache hit")
       return of(this.userCache[userId]);
     } 
 

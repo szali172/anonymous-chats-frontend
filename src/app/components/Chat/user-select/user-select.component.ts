@@ -19,6 +19,8 @@ import { ChatUser } from '../../../models/chat/chat-user';
 import { ChatGuessDTO } from '../../../models/chat/chat-guess-dto';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogClose, MatDialogModule } from '@angular/material/dialog';
 import { UserService } from '../../../services/user.service';
+import { MatIconModule } from '@angular/material/icon';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-user-select',
@@ -32,11 +34,13 @@ import { UserService } from '../../../services/user.service';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatAutocompleteModule,
     ReactiveFormsModule,
     AsyncPipe,
     MatTableModule,
     DragDropModule,
+    ScrollingModule,
     CommonModule,
     MatDialogClose,
     MatDialogModule

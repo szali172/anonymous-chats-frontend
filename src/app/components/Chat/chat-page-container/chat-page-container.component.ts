@@ -250,10 +250,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
   openGuessPage() {
     const openGuess = this.dialog.open(UserSelectComponent, {
       data: {thisId : this.selectedCompleteChat!.chat.id, loggedInUser: this.loggedInUser},
-      width: '75vw',
-      height: '75vh',
-      maxWidth: '90vw',
-      maxHeight: '90vh'
+      width: '400px'
     })
     openGuess.afterClosed().subscribe();
   }

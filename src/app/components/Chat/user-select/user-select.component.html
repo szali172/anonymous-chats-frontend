@@ -1,58 +1,75 @@
-<div class="main-container">
+  <mat-dialog-content cdkDropListGroup class="main-container">
 
-
-<mat-dialog-content style="padding: 20px; background-color: var(--primary-color); height: 100%;">
-  <div cdkDropListGroup class="drag-container">
-    <div class="user-container">
-      <span class="box-title">Available Users</span>
-
-      <div
-        id="allUsersContainer"
-        cdkDropList
-        [cdkDropListData]="allUsers"
-        cdkDropList
-        class="list"
-        (cdkDropListDropped)="drop($event)"
-        [cdkDropListEnterPredicate]="noReturnPredicate"
-      >
-        <div
-          class="user-box"
-          *ngFor="let user of allUsers"
-          [cdkDragData]="user"
-          cdkDrag
-        >
-          {{ user.userName }}
-        </div>
-      </div>
-    </div>
-    <!-- addin an ngif to prevent problems with displaying before calls were made -->
-    <div style="min-width:45%;">
-    @if(guesseePseudonyms.length > 0) {
-      @for (selectedUser of selectedUsers; track selectedUser;) {
+    <section>
+      <h3 class="list-header">Chat Members</h3>
       <div class="guess-container">
-        <span class="box-title">Select a guess for {{ getMappingPseudonym($index) }}</span>
-        <button (click)="clearSelection($index)">Clear Guess</button>
-        <div
-          id="{{ $index }}"
-          cdkDropList
-          [cdkDropListSortingDisabled]="true"
-          [cdkDropListData]="selectedUsers"
-          cdkDropList
-          class="list"
-          (cdkDropListDropped)="drop($event)"
-        >
-          <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
-            {{ selectedUser.userName }}
-          </div>
-        </div>
-    </div>
-      }
-    }
-    </div>
-  </div>
+        
+        @if (guesseePseudonyms.length > 0) {
+          @for (selectedUser of selectedUsers; track selectedUser) {
+            <div id="chat-member-card">
+    
+              <div class="member-name noselect">
+                <mat-icon>person_search</mat-icon>
+                <span>{{ getMappingPseudonym($index) }}</span>
+              </div>
+    
+              <a class="clear-guess-button" (click)="clearSelection($index)">
+                <span style="white-space: nowrap;">Clear Guess</span>
+                <mat-icon>close</mat-icon>
+              </a>
+    
+              <div
+                id="{{ $index }}"
+                class="list"
+                cdkDropList
+                [cdkDropListSortingDisabled]="true"
+                [cdkDropListData]="selectedUsers"
+                cdkDropListOrientation="horizontal"
+                cdkDropList
+                (cdkDropListDropped)="drop($event)">
+                <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
+                  {{ selectedUser?.userName }}
+                </div>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </section>
 
-</mat-dialog-content>
-</div>
+    <section>
+      <h3 class="list-header">All Group Members</h3>
+        <cdk-virtual-scroll-viewport
+          orientation="horizontal"
+          itemSize="200"
+          [minBufferPx]="400"
+          class="guess-container">  
+          <div
+            class="list"
+            cdkDropList
+            [cdkDropListData]="allUsers"
+            cdkDropListOrientation="horizontal"
+            cdkDropList
+            (cdkDropListDropped)="drop($event)"
+            [cdkDropListEnterPredicate]="noReturnPredicate">
+            
+            <div
+              id="group-member-card"
+              *cdkVirtualFor="let user of allUsers"
+              [cdkDragData]="user"
+              cdkDrag>
+              <div class="member-name noselect">
+                <mat-icon>person</mat-icon>
+                <span>{{ user.userName }}</span>
+              </div>
+            </div>
+          
+          </div>
+        </cdk-virtual-scroll-viewport>
+    </section>
+      
+  </mat-dialog-content>
+
 <mat-dialog-actions style="background-color: var(--primary-color);;">
   <button (click)="onSubmit()" mat-dialog-close>Save Guess</button>
 </mat-dialog-actions>

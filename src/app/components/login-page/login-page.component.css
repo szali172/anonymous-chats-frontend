@@ -78,6 +78,13 @@ margin:auto;
   font-size: 1.2vmax;
   text-wrap: nowrap;
   color: whitesmoke;
+  transition: ease all 0.3s;
+}
+
+#get-started-button:hover {
+  background-color: rgb(177, 94, 177);
+  translate: 0 -3px;
+  transition: ease all 0.3s;
 }
 
 

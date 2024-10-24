@@ -2,39 +2,47 @@
 
     <section>
       <h3 class="list-header">Chat Members</h3>
-      <div class="guess-container">
-        
-        @if (guesseePseudonyms.length > 0) {
-          @for (selectedUser of selectedUsers; track selectedUser) {
-            <div id="chat-member-card">
-    
-              <div class="member-name noselect">
-                <mat-icon>person_search</mat-icon>
-                <span>{{ getMappingPseudonym($index) }}</span>
-              </div>
-    
-              <a class="clear-guess-button" (click)="clearSelection($index)">
-                <span style="white-space: nowrap;">Clear Guess</span>
-                <mat-icon>close</mat-icon>
-              </a>
-    
-              <div
-                id="{{ $index }}"
-                class="list"
-                cdkDropList
-                [cdkDropListSortingDisabled]="true"
-                [cdkDropListData]="selectedUsers"
-                cdkDropListOrientation="horizontal"
-                cdkDropList
-                (cdkDropListDropped)="drop($event)">
-                <div class="user-box" cdkDrag [cdkDragData]="selectedUser">
-                  {{ selectedUser?.userName }}
+      <cdk-virtual-scroll-viewport
+          orientation="horizontal"
+          itemSize="200"
+          [minBufferPx]="400"
+          [maxBufferPx]="500"
+          class="guess-container"
+          *ngIf="guesseePseudonyms.length > 0">
+
+          <div class="chat-member-container">
+            @for (selectedUser of selectedUsers; track selectedUser) {
+              <div id="chat-member-card">
+      
+                <div class="member-name noselect">
+                  <mat-icon>person_search</mat-icon>
+                  <span>{{ getMappingPseudonym($index) }}</span>
+                </div>
+      
+                <a class="clear-guess-button" (click)="clearSelection($index)">
+                  <span style="white-space: nowrap;">Clear Guess</span>
+                  <!-- <mat-icon style="font-size: smaller">close</mat-icon> -->
+                </a>
+      
+                <div
+                  id="{{ $index }}"
+                  class="list"
+                  cdkDropList
+                  [cdkDropListSortingDisabled]="true"
+                  [cdkDropListData]="selectedUsers"
+                  cdkDropListOrientation="horizontal"
+                  cdkDropList
+                  (cdkDropListDropped)="drop($event)">
+
+                  <div class="selection-box" cdkDrag [cdkDragData]="selectedUser">
+                    {{ selectedUser?.userName }}
+                  </div>
+
                 </div>
               </div>
-            </div>
-          }
-        }
-      </div>
+            }
+          </div>
+      </cdk-virtual-scroll-viewport>
     </section>
 
     <section>
@@ -43,7 +51,9 @@
           orientation="horizontal"
           itemSize="200"
           [minBufferPx]="400"
-          class="guess-container">  
+          [maxBufferPx]="500"
+          class="guess-container"
+          style="height: 90px !important">  
           <div
             class="list"
             cdkDropList
@@ -70,6 +80,6 @@
       
   </mat-dialog-content>
 
-<mat-dialog-actions style="background-color: var(--primary-color);;">
-  <button (click)="onSubmit()" mat-dialog-close>Save Guess</button>
+<mat-dialog-actions style="background-color: var(--primary-color);">
+  <button class="save-button" (click)="onSubmit()" mat-dialog-close>Save Guess</button>
 </mat-dialog-actions>

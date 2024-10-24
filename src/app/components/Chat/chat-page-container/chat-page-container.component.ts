@@ -104,6 +104,7 @@ export class ChatPageContainerComponent implements OnInit, OnDestroy {
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
+    this.chatService.endConnection()
   }
 
   
